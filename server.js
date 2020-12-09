@@ -3,9 +3,14 @@ const models = require("./models");
 const config = require("dotenv");
 
 const app = express();
-var cors = require("cors");
 
+//Log request
+const logger = require('morgan');
+app.use(logger('dev'));
+
+var cors = require("cors");
 app.use(cors());
+
 //Use body parser
 let bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));

@@ -1,23 +1,22 @@
-const { models } = require('../../sequelize');
-const { getIdParam } = require('../helpers');
+const User = require('../models').User;
 
 async function getAll() {
-	const users = await models.user.findAll();
+	const users = await User.findAll();
 	return users;
 }
 
 async function getById(id) {
-	const user = await models.user.findByPk(id);
+	const user = await User.findByPk(id);
 	return user;
 }
 
 async function create(user) {
-	const res = await models.user.create(user);
+	const res = await User.create(user);
 	return res;
 }
 
 async function update(id, user) {
-	const res = await models.user.update(user, {
+	const res = await User.update(user, {
 			where: {
 				id: id
 			}
@@ -26,7 +25,7 @@ async function update(id, user) {
 }
 
 async function remove(id) {
-	const res = await models.user.destroy({
+	const res = await User.destroy({
 		where: {
 			id: id
 		}
