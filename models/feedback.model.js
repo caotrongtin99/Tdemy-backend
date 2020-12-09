@@ -1,31 +1,31 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
+    const Feedback = sequelize.define('Feedback', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        email: {
+        code_id: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        password: {
+        teacher_id: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        role: {
-            type: DataTypes.INTEGER,
+        owner_id: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
-        avatar_url: {
+        comment: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        status: {
-            type: DataTypes.INTEGER,
+        rating: {
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
-        ref_token: {
+        img_url: {
             type: DataTypes.STRING,
             allowNull: false,
         },
@@ -38,5 +38,5 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         }
     });
-    return User;
+    return Feedback;
 };

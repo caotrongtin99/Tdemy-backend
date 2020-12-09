@@ -1,32 +1,32 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
+    const Chapter = sequelize.define('Chapter', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        email: {
+        code: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        password: {
+        owner_id: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        role: {
-            type: DataTypes.INTEGER,
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        duration: {
+            type: DataTypes.DATE,
             allowNull: false,
         },
-        avatar_url: {
+        video_url: {
             type: DataTypes.STRING,
             allowNull: true,
         },
         status: {
             type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        ref_token: {
-            type: DataTypes.STRING,
             allowNull: false,
         },
         created_at: {
@@ -38,5 +38,5 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         }
     });
-    return User;
-};
+    return Chapter;
+};  

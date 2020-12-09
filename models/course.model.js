@@ -1,20 +1,20 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
+    const Course = sequelize.define('Course', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        email: {
+        code: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        password: {
+        owner_id: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        role: {
-            type: DataTypes.INTEGER,
+        name: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         avatar_url: {
@@ -25,9 +25,17 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        ref_token: {
+        description: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
+        },
+        rate: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        fee: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
         },
         created_at: {
             type: DataTypes.DATE,
@@ -38,5 +46,5 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         }
     });
-    return User;
+    return Course;
 };
