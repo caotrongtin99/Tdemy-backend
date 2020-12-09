@@ -1,5 +1,7 @@
 const express = require("express");
 const models = require("./models");
+const config = require("dotenv");
+
 const app = express();
 var cors = require("cors");
 
