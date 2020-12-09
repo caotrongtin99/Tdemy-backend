@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Chapter = sequelize.define('Chapter', {
+    const Chapter = sequelize.define('chapter', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,

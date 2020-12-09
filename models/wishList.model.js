@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const WishList = sequelize.define('WishList', {
+    const WishList = sequelize.define('wishList', {
         user_id: {
             type: DataTypes.STRING,
             allowNull: false,
