@@ -31,6 +31,8 @@
     "lodash": "^4.17.20",
     "nodemon": "^2.0.6",
     "pg": "^8.5.1",
+    "redis": "^3.0.2",
+    "nodemailer": "*",
     "jsonwebtoken": "^8.5.1",
     "rand-token": "^1.0.1",
     "pg-hstore": "^2.3.3",
