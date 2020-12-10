@@ -19,23 +19,23 @@ services:
   #     - .:/app/
   #     - /app/node_modules
 
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    expose:
-      - "6379"
-    volumes:
-      - .docker/redis:/data
-    restart: always
+  # redis:
+  #   image: redis:latest
+  #   ports:
+  #     - "6379:6379"
+  #   expose:
+  #     - "6379"
+  #   volumes:
+  #     - .docker/redis:/data
+  #   restart: always
 
   postgres:
     image: postgres
     restart: always
     ports:
       - "5432:5432"
-    volumes:
-      - .docker/postgres:/var/lib/postgresql/data
+    # volumes:
+    #   - .docker/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
