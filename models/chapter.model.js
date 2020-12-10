@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Chapter = sequelize.define('chapter', {
+    const Chapter = sequelize.define('Chapter',  {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -9,9 +9,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        owner_id: {
-            type: DataTypes.STRING,
+        course_id: {
+            type: DataTypes.UUID,
             allowNull: false,
+            references: {
+                model: 'course',
+                key: 'id'
+            },
+            onUpdate: 'cascade',
+            onDelete: 'cascade'
         },
         description: {
             type: DataTypes.STRING,
@@ -29,14 +35,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        }
+    }, {
+        tableName: 'chapter',
+        underscored: true
     });
+
+    Chapter.associate = (models) => {
+        Chapter.course = Chapter.belongsTo(
+            models.Course,
+            {
+                as: 'course',
+                foreignKey: 'course_id'
+            }
+        );
+    };
     return Chapter;
 };  

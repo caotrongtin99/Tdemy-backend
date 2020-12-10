@@ -29,17 +29,31 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        created_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
-        updated_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        }
     },
     {
-    freezeTableName: true
+        tableName: 'user',
+        underscored: true
     });
+
+    User.associate = (models) => {
+        User.feedbacks = User.hasMany(
+            models.Feedback,
+            {
+                as: 'feedbacks',
+                foreignKey: 'owner_id',
+                onDelete: 'cascade',
+                hooks: true
+            }
+        );
+        User.wishlist = User.hasMany(
+            models.WishList,
+            {
+                as: 'wishList',
+                foreignKey: 'user_id',
+                onDelete: 'cascade',
+                hooks: true
+            }
+        );
+    }
     return User;
 };

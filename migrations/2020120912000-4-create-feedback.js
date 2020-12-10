@@ -1,23 +1,31 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, DataTypes) => {
-    await queryInterface.createTable('Feedback', {
+    await queryInterface.createTable('feedback', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        code_id: {
-            type: DataTypes.STRING,
+        course_id: {
+            type: DataTypes.UUID,
             allowNull: false,
-        },
-        teacher_id: {
-            type: DataTypes.STRING,
-            allowNull: false,
+            references: {
+                model: 'course',
+                key: 'id'
+            },
+            onUpdate: 'cascade',
+            onDelete: 'cascade'
         },
         owner_id: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             allowNull: false,
+            references: {
+                model: 'user',
+                key: 'id'
+            },
+            onUpdate: 'cascade',
+            onDelete: 'cascade'
         },
         comment: {
             type: DataTypes.STRING,
@@ -42,6 +50,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, DataTypes) => {
-    await queryInterface.dropTable('Feedback');
+    await queryInterface.dropTable('feedback');
   }
 };

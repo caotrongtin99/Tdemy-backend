@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, DataTypes) => {
-    await queryInterface.createTable('Course', {
+    await queryInterface.createTable('chapter', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -11,33 +11,31 @@ module.exports = {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        owner_id: {
+        course_id: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: 'course',
+                key: 'id'
+            },
+            onUpdate: 'cascade',
+            onDelete: 'cascade'
+        },
+        description: {
             type: DataTypes.STRING,
+            allowNull: true,
+        },
+        duration: {
+            type: DataTypes.DATE,
             allowNull: false,
         },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        avatar_url: {
+        video_url: {
             type: DataTypes.STRING,
             allowNull: true,
         },
         status: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
-        description: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        rate: {
-            type: DataTypes.FLOAT,
-            allowNull: true,
-        },
-        fee: {
-            type: DataTypes.FLOAT,
-            allowNull: true,
         },
         created_at: {
             type: DataTypes.DATE,
@@ -50,6 +48,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, DataTypes) => {
-    await queryInterface.dropTable('Course');
+    await queryInterface.dropTable('chapter');
   }
 };

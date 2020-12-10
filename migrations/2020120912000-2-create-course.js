@@ -1,22 +1,28 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, DataTypes) => {
-    await queryInterface.createTable('User', {
+    await queryInterface.createTable('course', {
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true
         },
-        email: {
+        code: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        password: {
-            type: DataTypes.STRING,
+        owner_id: {
+            type: DataTypes.UUID,
             allowNull: false,
+            references: {
+                model: 'user',
+                key: 'id'
+            },
+            onUpdate: 'cascade',
+            onDelete: 'cascade'
         },
-        role: {
-            type: DataTypes.INTEGER,
+        name: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         avatar_url: {
@@ -27,9 +33,17 @@ module.exports = {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        ref_token: {
+        description: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
+        },
+        rate: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
+        },
+        fee: {
+            type: DataTypes.FLOAT,
+            allowNull: true,
         },
         created_at: {
             type: DataTypes.DATE,
@@ -42,6 +56,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, DataTypes) => {
-    await queryInterface.dropTable('User');
+    await queryInterface.dropTable('course');
   }
 };
