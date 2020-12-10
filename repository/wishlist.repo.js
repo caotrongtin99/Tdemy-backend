@@ -1,22 +1,22 @@
-const model = require("../models").User;
+const WishList = require("../models/wishList.model");
 
 async function getAll() {
-	const users = await model.findAll();
+	const users = await WishList.findAll();
 	return users;
 }
 
 async function getById(id) {
-	const user = await User.findByPk(id);
+	const user = await WishList.findByPk(id);
 	return user;
 }
 
 async function create(user) {
-	const res = await User.create(user);
+	const res = await WishList.create(user);
 	return res;
 }
 
 async function update(id, user) {
-	const res = await User.update(user, {
+	const res = await WishList.update(user, {
 			where: {
 				id: id
 			}
@@ -25,7 +25,7 @@ async function update(id, user) {
 }
 
 async function remove(id) {
-	const res = await User.destroy({
+	const res = await WishList.destroy({
 		where: {
 			id: id
 		}
