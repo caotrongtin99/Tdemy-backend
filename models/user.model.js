@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         role: {
             type: DataTypes.INTEGER,
+            defaultValue: 0,
             allowNull: false,
         },
         avatar_url: {
@@ -23,10 +24,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         status: {
             type: DataTypes.INTEGER,
+            defaultValue: -1,
             allowNull: false,
         },
         ref_token: {
             type: DataTypes.STRING,
+            defaultValue: DataTypes.UUIDV4,
             allowNull: false,
         },
     },
