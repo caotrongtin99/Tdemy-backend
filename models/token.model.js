@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Token = sequelize.define('Token',  {
+    const Token = sequelize.define('Token', {
         email: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -12,15 +12,16 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'token',
         underscored: true
     });
-
-    Token.user = Token.belongsTo(
-        models.User,
-        {
-            as: 'user',
-            foreignKey: 'email',
-            onDelete: 'cascade',
-            hooks: true
-        }
-    );
+    Token.associate = (models) => {
+        Token.user = Token.belongsTo(
+            models.User,
+            {
+                as: 'user',
+                foreignKey: 'email',
+                onDelete: 'cascade',
+                hooks: true
+            }
+        );
+    }
     return Token;
 };  

@@ -5,12 +5,6 @@ module.exports = {
         email: {
             type: DataTypes.STRING,
             allowNull: false,
-            references: {
-              model: 'user',
-              key: 'email'
-            },
-            onUpdate: 'cascade',
-            onDelete: 'cascade'
         },
         accessToken: {
             type: DataTypes.STRING,
