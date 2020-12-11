@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        accessToken: {
+        access_token: {
             type: DataTypes.STRING,
             allowNull: false,
         }
@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'token',
         underscored: true
     });
+    Token.removeAttribute('id');
     Token.associate = (models) => {
         Token.user = Token.belongsTo(
             models.User,

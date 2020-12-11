@@ -6,7 +6,7 @@ module.exports = {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        accessToken: {
+        access_token: {
             type: DataTypes.STRING,
             allowNull: false,
         },
