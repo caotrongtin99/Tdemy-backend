@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const bcrypt = require("bcryptjs");
+
 const jwt = require("jsonwebtoken");
 const randToken = require("rand-token");
 const validation = require("../middleware/validation.mdw");
@@ -17,8 +17,14 @@ router.get("/", async function (req, res) {
 const register_schema = require("../schemas/register.json");
 router.post("/", validation(register_schema), async function (req, res) {
   const user = req.body;
+
+  const userFind = await userRepo.getByEmail(user.email);
+  if(userFind.length != 0){
+    return res.json("ACCOUNT EXISTS")
+  }
+
   const result = await userRepo.create(user);
-  sendMail(mailModel);
+  // sendMail(mailModel);
   res.json(result);
 });
 

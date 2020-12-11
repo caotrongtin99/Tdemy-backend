@@ -4,8 +4,13 @@ const validation = require("../middleware/validation.mdw");
 const userRepo = require("../repository/user.repo");
 const redisClient = require("../utils/redis");
 
-router.post("/auth", validation(), async function (req, res) {
+const auth_schema = require("../schemas/auth.json");
+router.post("/auth", validation(auth_schema), async function (req, res) {
   const reqData = req.body;
+  //Check accessToken in redis first
+
+
+  //If accessToken Null or expire then use Login
   const userFind = await userRepo.getByEmail(reqData.email);
   // User not found
   if (userFind === null) {
@@ -14,16 +19,22 @@ router.post("/auth", validation(), async function (req, res) {
     });
   }
   // Check password
-  if (!bcrypt.compareSync(req.body.password, user.password)) {
+  if (!bcrypt.compareSync(reqData.password, userFind.password)) {
     return res.json({
       authenticated: false,
     });
   }
 
-    const accessToken = randToken.generate(80);
-    const refreshToken = randToken.generate(80);
-    await userRepo.update_ref_token(userFind.id, refreshToken);
-    redisClient;
+  const accessToken = randToken.generate(80);
+  const refreshToken = randToken.generate(80);
+  const update_ref_res = await userRepo.update_ref_token(userFind.id, refreshToken);
+  res.json(accessToken);
 });
 
+let update_accessToken_redis = (accessToken, data) => {
+  return redisClient.set(accessToken, data);
+}
+let get_accessToken_redis = (accessToken) => {
+
+}
 module.exports = router;

@@ -1,4 +1,5 @@
 const User = require("../models").User;
+const bcrypt = require("bcryptjs");
 
 async function getAll() {
   const users = await User.findAll();
@@ -15,6 +16,7 @@ async function getByEmail(email) {
       email: email,
     },
   });
+  return user;
 }
 async function create(user) {
   user.password = bcrypt.hashSync(user.password, process.env.SALT || 10);
@@ -39,6 +41,7 @@ async function update_ref_token(uid, refreshToken) {
       },
     }
   );
+  return res;
 }
 async function remove(id) {
   const res = await User.destroy({
@@ -55,4 +58,6 @@ module.exports = {
   create,
   update,
   remove,
+  update_ref_token,
+  getByEmail
 };
