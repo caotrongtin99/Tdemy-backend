@@ -1,0 +1,15 @@
+{
+  "additionalProperties": true,
+  "required": [
+    "accessToken",
+    "password"
+  ],
+  "properties": {
+    "email": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    }
+  }
+}

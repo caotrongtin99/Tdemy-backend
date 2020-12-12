@@ -38,3 +38,4 @@ router.delete("/:id", async function(req, res){
         res.json(response({}, -1,"something wrong"));
     }
 })
+module.exports = router;
