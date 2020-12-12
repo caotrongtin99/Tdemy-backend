@@ -49,7 +49,7 @@ router.get("/:id", async function(req, res){
 
 // Update
 const update_schema = require("../schemas/update_user.json");
-router.post("/:id", validation(update_schema), async function(req, res){
+router.put("/:id", validation(update_schema), async function(req, res){
   const id = req.params.id;
   const user = req.body;
   try {
