@@ -1,4 +1,4 @@
-const WishList = require("../models/wishList.model");
+const WishList = require("../models").WishList;
 
 async function getAll() {
 	const users = await WishList.findAll();

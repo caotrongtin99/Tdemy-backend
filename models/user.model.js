@@ -1,42 +1,52 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
+    const User = sequelize.define(
+      "User",
+      {
         id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            primaryKey: true
+          type: DataTypes.UUID,
+          defaultValue: DataTypes.UUIDV4,
+          primaryKey: true,
         },
         email: {
-            type: DataTypes.STRING,
-            allowNull: false,
+          type: DataTypes.STRING,
+          allowNull: false,
         },
         password: {
-            type: DataTypes.STRING,
-            allowNull: false,
+          type: DataTypes.STRING,
+          allowNull: false,
         },
         role: {
-            type: DataTypes.INTEGER,
-            defaultValue: 0,
-            allowNull: false,
+          type: DataTypes.INTEGER,
+          defaultValue: 0,
+          allowNull: false,
         },
         avatar_url: {
-            type: DataTypes.STRING,
-            allowNull: true,
+          type: DataTypes.STRING,
+          allowNull: true,
         },
         status: {
-            type: DataTypes.INTEGER,
-            defaultValue: -1,
-            allowNull: false,
+          type: DataTypes.INTEGER,
+          defaultValue: -1,
+          allowNull: false,
         },
         ref_token: {
-            type: DataTypes.STRING,
-            defaultValue: DataTypes.UUIDV4,
-            allowNull: false,
+          type: DataTypes.STRING,
+          defaultValue: DataTypes.UUIDV4,
+          allowNull: false,
         },
-    },
-    {
-        tableName: 'user',
-        underscored: true
-    });
+      },
+      {
+        tableName: "user",
+        underscored: true,
+        instanceMethods: {
+          toJSON: function () {
+            var values = Object.assign({}, this.get());
+            delete values.password;
+            return values;
+          },
+        },
+      }
+    );
 
     User.associate = (models) => {
         User.feedbacks = User.hasMany(

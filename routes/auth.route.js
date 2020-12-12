@@ -6,7 +6,7 @@ const userRepo = require("../repository/user.repo");
 const tokenRepo = require("../repository/token.repo");
 const redisClient = require("../utils/redis");
 const logger = require("../utils/log");
-
+const response = require("../constants/response");
 const auth_schema = require("../schemas/auth.json");
 router.post("/", validation(auth_schema), async function (req, res) {
   const reqData = req.body;
@@ -21,9 +21,7 @@ router.post("/", validation(auth_schema), async function (req, res) {
       // uer not found
       if (userFind.length == 0) {
         logger.info("User %s not exist!", reqData.email);
-        return res.json({
-          authenticated: false,
-        });
+        return res.json(response({}, 409, "User not exist"));
       }
 
       try {
@@ -47,16 +45,22 @@ router.post("/", validation(auth_schema), async function (req, res) {
             access_token: accessToken,
             email: userFind.email,
           });
-          return res.json(accessToken);
+          return res.json(
+            response(
+              {
+                accessToken: accessToken,
+              },
+              0,
+              "success"
+            )
+          );
         }
 
         // ref token not match
         // check password
         if (!bcrypt.compareSync(reqData.password, userFind.password)) {
           logger.info("Password not match!");
-          return res.json({
-            authenticated: false,
-          });
+          return res.json(response({}, 400, "Invalid credentials"));
         }
 
         const accessToken = randToken.generate(80);
@@ -89,7 +93,15 @@ router.post("/", validation(auth_schema), async function (req, res) {
       }
     } else {
       logger.info("accessToken valid!");
-      res.json(data.accessToken);
+      res.json(
+        response(
+          {
+            accessToken: data.accessToken,
+          },
+          0,
+          "success"
+        )
+      );
     }
   });
 });

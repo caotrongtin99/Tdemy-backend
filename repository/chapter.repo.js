@@ -1,4 +1,4 @@
-const Chapter = require("../models/chapter.model");
+const Chapter = require("../models").Chapter;
 
 async function getAll() {
 	const users = await Chapter.findAll();

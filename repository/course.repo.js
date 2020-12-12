@@ -1,4 +1,4 @@
-const Course = require("../models/course.model");
+const Course = require("../models").Course;
 
 async function getAll() {
 	const users = await Course.findAll();

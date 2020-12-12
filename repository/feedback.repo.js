@@ -1,4 +1,4 @@
-const FeedBack = require("../models/feedback.model");
+const FeedBack = require("../models").FeedBack;
 
 async function getAll() {
 	const users = await FeedBack.findAll();
