@@ -107,7 +107,9 @@ router.post("/", validation(auth_schema), async function (req, res) {
 });
 
 let update_accessToken_redis = (accessToken, data) => {
-  return redisClient.hmset(accessToken, data);
+  let isSet = redisClient.hmset(accessToken, data);
+  let isSetExpire = redisClient.expire(accessToken, process.env.ACCESS_TOKEN_EXPIRE || 60);
+  return isSet&&isSetExpire;
 };
 
 module.exports = router;

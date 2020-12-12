@@ -15,7 +15,7 @@ const register_schema = require("../schemas/register.json");
 router.post("/", validation(register_schema), async function (req, res) {
   const user = req.body;
   const userFind = await userRepo.getByEmail(user.email);
-  if(userFind.length != 0){
+  if(userFind.length !== 0){
     return res.json("ACCOUNT EXISTS")
   }
 
