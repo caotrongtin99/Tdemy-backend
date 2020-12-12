@@ -8,6 +8,7 @@ async function getAll() {
 
 async function getById(id) {
   const user = await User.findByPk(id);
+  console.log(user);
   return user;
 }
 async function getByEmail(email) {

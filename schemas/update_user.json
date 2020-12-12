@@ -1,14 +1,14 @@
 {
-    "additionalProperties": false,
+    "additionalProperties": true,
     "required": [
-        "email",
-        "password"
+        "accessToken",
+        "refreshToken"
     ],
     "properties": {
-        "email": {
+        "accessToken": {
             "type": "string"
         },
-        "password": {
+        "refreshToken": {
             "type": "string"
         }
     }

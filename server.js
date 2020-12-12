@@ -7,7 +7,7 @@ const logger = require("./utils/log");
 const morgan = require('morgan');
 app.use(morgan('dev'));
 
-var cors = require("cors");
+const cors = require("cors");
 app.use(cors());
 
 //Use body parser
