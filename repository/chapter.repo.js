@@ -1,15 +1,43 @@
 const Chapter = require("../models").Chapter;
 
 async function getAll() {
-	const users = await Chapter.findAll();
-	return users;
+	const chapters = await Chapter.findAll();
+	return chapters;
 }
 
 async function getById(id) {
-	const user = await Chapter.findByPk(id);
-	return user;
+	const chapter = await Chapter.findByPk(id);
+	return chapter;
 }
 
+async function countByCourseId(course_id){
+	const count = await Chapter.count({
+		where:{
+			course_id: course_id
+		},
+	})
+	return count || 0;
+}
+
+async function getAllByCourseId(course_id){
+	const chapters = await Chapter.findAll({
+		where:{
+			course_id: course_id
+		},
+		order: [["code", "ASC"]]
+	})
+	return chapters;
+}
+async function getPreviewChapter(course_id){
+	const chapters = await Chapter.findAll({
+		where:{
+			course_id: course_id
+		},
+		order: [["code", "ASC"]],
+		limit: process.env.NUMBER_CHAPTER_PREVIEW || 1
+	});
+	return chapters;
+}
 async function create(user) {
 	const res = await Chapter.create(user);
 	return res;
@@ -34,6 +62,9 @@ async function remove(id) {
 }
 
 module.exports = {
+	getPreviewChapter,
+	getAllByCourseId,
+	countByCourseId,
 	getAll,
 	getById,
 	create,

@@ -6,6 +6,15 @@ async function getAll() {
   return users;
 }
 
+async function getNameById(id){
+  const user = await User.findOne({
+    where:{
+      id: id,
+    },
+    attributes: ["name"]
+  })
+}
+
 async function getById(id) {
   const user = await User.findByPk(id);
   console.log(user);
@@ -54,6 +63,7 @@ async function remove(id) {
 }
 
 module.exports = {
+  getNameById,
   getAll,
   getById,
   create,

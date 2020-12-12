@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         status: {
             type: DataTypes.INTEGER,
+            defaultValue: -1,
             allowNull: false,
         },
         description: {

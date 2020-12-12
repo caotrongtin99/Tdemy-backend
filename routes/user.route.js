@@ -26,8 +26,10 @@ router.post("/", validation(register_schema), async function (req, res) {
     if (userFind.length !== 0) {
       return res.json(response({},409,"email exist"));
     }
-    const result = await userRepo.create(user);
+    let result = await userRepo.create(user);
     // sendMail(mailModel);
+    result = {...result.dataValues};
+    delete result.password;
     res.json(response(result, 0, "success"));
   }catch (e){
     logger.error("Register error: %s",e);

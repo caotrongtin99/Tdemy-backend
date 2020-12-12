@@ -7,6 +7,7 @@ const logger = require("../utils/log");
 // Get All feedback
 router.get("/", async function (req, res) {
     try {
+        //LIMIT OFFSET
         const feedback = await feedbackRepo.getAll();
         res.json(response(feedback, 0, "success"));
     } catch (e) {
@@ -16,7 +17,7 @@ router.get("/", async function (req, res) {
 
 // Create new feedback
 const register_feedback_schema = require("../schemas/register_feedback.json");
-router.post("/", validation(register_feedback_schema), async function (req, res) {
+router.post("/", auth_role([0,1]),validation(register_feedback_schema), async function (req, res) {
     const reqData = req.body;
     try {
         const feedback = await feedbackRepo.create(reqData);
@@ -42,7 +43,7 @@ router.put("/:id", validation(update_feedback_schema), async function(req, res){
 })
 
 // Delete feedback
-router.delete("/:id", async function(req, res){
+router.delete("/:id", auth_role([owner]),async function(req, res){
     const id = req.params.id;
     try{
         const result = await feedbackRepo.remove(id);

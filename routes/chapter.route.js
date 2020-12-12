@@ -5,14 +5,16 @@ const chapterRepo = require("../repository/chapter.repo");
 const logger = require("../utils/log");
 
 // Get All chapter
-router.get("/", async function (req, res) {
+router.get("/",async function (req, res) {
     try {
+        // id, name, duration, status
         const chapter = await chapterRepo.getAll();
         res.json(response(chapter, 0, "success"));
     } catch (e) {
         logger.error("Get all chapter error: %s", e);
     }
 });
+// get preview
 
 // Create new chapter
 const register_chapter_schema = require("../schemas/register_chapter.json");

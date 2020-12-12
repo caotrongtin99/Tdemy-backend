@@ -135,7 +135,9 @@ router.post("/", validation(login_schema), async function (req, res) {
         access_token: accessToken,
         email: userFind.email,
     });
-    res.json(response({accessToken: accessToken, refreshToken: userFind.ref_token}, 0, "success"));
+    userFind = {...userFind.dataValues, accessToken:accessToken};
+    delete userFind.password;
+    res.json(response(userFind, 0, "success"));
 })
 
 let update_accessToken_redis = (accessToken, data) => {

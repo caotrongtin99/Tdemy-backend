@@ -7,6 +7,7 @@ const logger = require("../utils/log");
 // Get All wishlist
 router.get("/", async function (req, res) {
     try {
+        // get all
         const wishlist = await wishListRepo.getAll();
         res.json(response(wishlist, 0, "success"));
     } catch (e) {

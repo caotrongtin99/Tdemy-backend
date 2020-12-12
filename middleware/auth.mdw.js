@@ -11,7 +11,7 @@ let auth_role = role => (req, res, next) => {
       return res.status(400).json(response({},400, "Access token not valid"));
     } else {
       logger.info("AccessToken data: %s", data);
-      if(data.role !== role){
+      if(!role.includes(data.role)){
         logger.info("Role [%s] not have privileges!", data.role);
         return res.status(400).json(response({},400, "You do not privileges"));
       }
