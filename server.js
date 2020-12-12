@@ -1,10 +1,11 @@
 const express = require("express");
 require("dotenv").config();
 const app = express();
+const logger = require("./utils/log");
 
 //Log request
-const logger = require('morgan');
-app.use(logger('dev'));
+const morgan = require('morgan');
+app.use(morgan('dev'));
 
 var cors = require("cors");
 app.use(cors());
