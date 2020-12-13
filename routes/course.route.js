@@ -10,7 +10,8 @@ const auth_role = require("../middleware/auth.mdw").auth_role;
 
 // Nested chapter
 router.use('/:id/chapters', require("./chapter.route"));
-
+// Nested feedback
+router.use('/:id/feedback', require("./feedback.route"));
 // Get All course
 router.get("/", async function (req, res) {
     try {

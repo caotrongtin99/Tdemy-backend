@@ -35,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         img_url: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
     },{
         tableName: 'feedback',
@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
             models.User,
             {
                 as: 'user',
-                foreignKey: 'owner_id'
+                foreignKey: 'id'
             }
         );
         Feedback.course = Feedback.belongsTo(
