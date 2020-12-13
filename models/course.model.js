@@ -57,7 +57,6 @@ module.exports = (sequelize, DataTypes) => {
         Course.teacher = Course.belongsTo(
             models.User,
             {
-                as: 'teacher',
                 foreignKey: 'owner_id'
             }
         );

@@ -1,22 +1,35 @@
 const Course = require("../models").Course;
+const User = require("../models").User;
 
 async function getAll(limit, offset) {
 	return await Course.findAll({
 		limit: limit,
-		offset: offset
+		offset: offset,
+		include: {
+			model: User,
+			attributes: ['name']
+		}
 	});
 }
-async function getAllByOwnerId(owner_id, limit, offset){
+async function getAllByOwnerId(user_id, limit, offset){
 	return await Course.findAll({
 		where:{
-			owner_id: owner_id
+			owner_id: user_id
 		},
 		limit: limit,
 		offset: offset
 	})
 }
 async function getById(id) {
-	return await Course.findByPk(id);
+	return await Course.findOne({
+		where:{
+			id: id
+		},
+		include: {
+			model: User,
+			attributes: ['name']
+		}
+	});
 }
 
 async function create(course) {

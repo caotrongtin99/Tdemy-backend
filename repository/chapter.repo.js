@@ -20,12 +20,13 @@ async function countByCourseId(course_id){
 }
 
 async function getAllByCourseId(course_id){
-	const chapters = await Chapter.findAll({
+	const chapters = await Chapter.findAndCountAll({
 		where:{
 			course_id: course_id
 		},
 		order: [["code", "ASC"]]
 	})
+	console.log(chapters.dataValues);
 	return chapters;
 }
 async function getPreviewChapter(course_id){

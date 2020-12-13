@@ -28,7 +28,6 @@ module.exports = (sequelize, DataTypes) => {
         WishList.courses = WishList.hasMany(
             models.Course,
             {
-                as: 'course',
                 foreignKey: 'id',
                 onDelete: 'cascade',
                 hooks: true
@@ -37,7 +36,6 @@ module.exports = (sequelize, DataTypes) => {
         WishList.user = WishList.belongsTo(
             models.User,
             {
-                as: 'user',
                 foreignKey: 'id',
                 onDelete: 'cascade',
                 hooks: true

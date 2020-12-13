@@ -2,49 +2,42 @@ const User = require("../models").User;
 const bcrypt = require("bcryptjs");
 
 async function getAll() {
-  const users = await User.findAll();
-  return users;
+  return await User.findAll();
 }
 
 async function getNameById(id){
-  const user = await User.findOne({
+  return await User.findOne({
     where:{
       id: id,
     },
     attributes: ["name"]
   });
-  return user;
 }
 
 async function getById(id) {
-  const user = await User.findByPk(id);
-  console.log(user);
-  return user;
+  return await User.findByPk(id);
 }
 async function getByEmail(email) {
-  const user = await User.findAll({
+  return await User.findAll({
     where: {
       email: email,
     },
   });
-  return user;
 }
 async function create(user) {
   user.password = bcrypt.hashSync(user.password, process.env.SALT || 10);
-  const res = await User.create(user);
-  return res;
+  return User.create(user);
 }
 
 async function update(id, user) {
-  const res = await User.update(user, {
+  return  await User.update(user, {
     where: {
       id: id,
     },
   });
-  return res;
 }
 async function update_ref_token(uid, refreshToken) {
-  const res = await User.update(
+  return await User.update(
     { ref_token: refreshToken },
     {
       where: {
@@ -52,15 +45,13 @@ async function update_ref_token(uid, refreshToken) {
       },
     }
   );
-  return res;
 }
 async function remove(id) {
-  const res = await User.destroy({
+  return await User.destroy({
     where: {
       id: id,
     },
   });
-  return res;
 }
 
 module.exports = {

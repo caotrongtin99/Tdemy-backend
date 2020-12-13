@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Feedback = sequelize.define('Feedback',{
+    const Feedback = sequelize.define('Enroll',{
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -24,19 +24,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             onUpdate: 'cascade',
             onDelete: 'cascade'
-        },
-        comment: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        rating: {
-            type: DataTypes.FLOAT,
-            allowNull: false,
-        },
-        img_url: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
+        }
     },{
         tableName: 'feedback',
         underscored: true
@@ -46,14 +34,14 @@ module.exports = (sequelize, DataTypes) => {
         Feedback.user = Feedback.belongsTo(
             models.User,
             {
-                foreignKey: 'id',
-                onDelete: 'cascade',
-                hooks: true
+                as: 'user',
+                foreignKey: 'id'
             }
         );
         Feedback.course = Feedback.belongsTo(
             models.Course,
             {
+                as: 'course',
                 foreignKey: 'id',
                 onDelete: 'cascade',
                 hooks: true
