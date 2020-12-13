@@ -79,6 +79,15 @@ module.exports = (sequelize, DataTypes) => {
                 hooks: true
             }
         );
+        Course.enroll = Course.hasMany(
+            models.Enroll,
+            {
+                as: 'enrolls',
+                foreignKey: 'course_id',
+                onDelete: 'cascade',
+                hooks: true
+            }
+        )
     };
 
     return Course;

@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Feedback = sequelize.define('Enroll',{
+    const Enroll = sequelize.define('Enroll',{
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: 'cascade',
             onDelete: 'cascade'
         },
-        owner_id: {
+        user_id: {
             type: DataTypes.UUID,
             allowNull: false,
             references: {
@@ -26,28 +26,24 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade'
         }
     },{
-        tableName: 'feedback',
+        tableName: 'enroll',
         underscored: true
     });
 
-    Feedback.associate = (models) => {
-        Feedback.user = Feedback.belongsTo(
+    Enroll.associate = (models) => {
+        Enroll.user = Enroll.belongsTo(
             models.User,
             {
-                as: 'user',
-                foreignKey: 'id'
+                foreignKey: 'user_id'
             }
         );
-        Feedback.course = Feedback.belongsTo(
+        Enroll.course = Enroll.belongsTo(
             models.Course,
             {
-                as: 'course',
-                foreignKey: 'id',
-                onDelete: 'cascade',
-                hooks: true
+                foreignKey: 'course_id'
             }
         );
     };
 
-    return Feedback;
+    return Enroll;
 };

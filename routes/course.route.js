@@ -3,6 +3,7 @@ const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const courseRepo = require("../repository/course.repo");
 const chapterRepo = require("../repository/chapter.repo");
+const enrollRepo = require("../repository/enroll.repo");
 const userRepo = require("../repository/user.repo");
 const logger = require("../utils/log");
 const rand = require("rand-token");
@@ -15,11 +16,23 @@ router.use('/:id/feedback', require("./feedback.route"));
 // Enrollment
 router.post('/:id/enroll', auth_role([0,1]), async function (req, res) {
     const course_id = req.params.id;
+    const reqData = req.body;
     const authData = req.authData;
     try{
-
+        const course = await courseRepo.getById(course_id);
+        if(course) {
+            let data = {
+                course_id: course_id,
+                user_id: authData.owner_id
+            }
+            console.log(data);
+            const enroll = await enrollRepo.create(data);
+            res.json(response(course, 0, "success"));
+        }else{
+            res.json(response({},404,"Course not exist to enroll"));
+        }
     }catch (e) {
-        logger.error("Enroll to course %s error %s", course_id, e);
+        logger.error("Enroll to course error ", e);
         res.json(response({},-1,"Enroll error"));
     }
 })
@@ -34,7 +47,8 @@ router.get("/", async function (req, res) {
         let courses;
         switch (type) {
             case "student":
-                courses = await courseRepo.getAll(limit, offset);
+                courses = await enrollRepo.getCourseByUserId(type_id ,limit, offset);
+                courses = [...courses]
                 break;
             case "teacher":
                 courses = await courseRepo.getAllByOwnerId(type_id, limit, offset);

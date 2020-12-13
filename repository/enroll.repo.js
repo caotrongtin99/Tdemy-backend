@@ -1,4 +1,6 @@
 const Enroll = require("../models").Enroll;
+const User = require("../models").User;
+const Course = require("../models").Course;
 
 async function getAll(limit, offset) {
     return  await Enroll.findAll({
@@ -8,14 +10,33 @@ async function getAll(limit, offset) {
 }
 
 async function getUserByCourseId(course_id, limit, offset){
-    return await Enroll.findAll({
+    return await Enroll.findAndCountAll({
         where:{
             course_id: course_id
         },
         limit: limit,
         offset: offset,
-        include: ['User']
+        include: User
     })
+}
+async function getCourseByUserId(user_id, limit, offset){
+    console.log("into", user_id);
+    let res = await Enroll.findAndCountAll({
+        where:{
+            user_id: user_id
+        },
+        limit: limit,
+        offset: offset,
+        include: Course
+            // model: Course,
+            // include: [{
+            //     model: User,
+            //     attributes: ['name']
+            // }]
+        // }
+    });
+    console.log(res.rows);
+    return res;
 }
 
 async function getAllByEnrollId(enroll_id){
@@ -50,8 +71,9 @@ async function remove(id) {
 }
 
 module.exports = {
-    getAllByCourseId,
     getAllByEnrollId,
+    getUserByCourseId,
+    getCourseByUserId,
     getAll,
     getById,
     create,
