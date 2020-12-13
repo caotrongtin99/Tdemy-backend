@@ -1,7 +1,10 @@
 const Course = require("../models").Course;
 
-async function getAll() {
-	const courses = await Course.findAll();
+async function getAll(limit, offset) {
+	const courses = await Course.findAll({
+		limit: limit,
+		offset: offset
+	});
 	return courses;
 }
 

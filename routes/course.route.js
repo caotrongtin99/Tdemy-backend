@@ -14,10 +14,12 @@ router.use('/:id/chapters', require("./chapter.route"));
 router.use('/:id/feedback', require("./feedback.route"));
 // Get All course
 router.get("/", async function (req, res) {
+    const limit = req.query.limit;
+    const offset = req.query.offset;
     try {
         // return student number, chapter
         let data = [];
-        const courses = await courseRepo.getAll();
+        const courses = await courseRepo.getAll(limit, offset);
         for (const course of courses) {
             const chapter_number = await chapterRepo.countByCourseId(course.id);
             const enroll = 0;
