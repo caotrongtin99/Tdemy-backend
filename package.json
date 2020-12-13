@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js",
+    "generate-lcov": "nyc report --reporter=text-lcov > lcov.info",
+    "coveralls-coverage": "coveralls < lcov.info",
+    "codeclimate-coverage": "codeclimate-test-reporter < lcov.info",
+    "coverage": "nyc npm test && npm run generate-lcov && npm run coveralls-coverage && npm run codeclimate-coverage"
   },
   "repository": {
     "type": "git",
@@ -17,14 +22,25 @@
   },
   "homepage": "https://github.com/caotrongtin99/Tdemy-backend#readme",
   "dependencies": {
+    "ajv": "^6.12.6",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^7.0.0",
     "express": "^4.17.1",
     "lodash": "^4.17.20",
+    "morgan": "^1.10.0",
+    "nodemailer": "*",
     "nodemon": "^2.0.6",
+    "path": "^0.12.7",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^6.3.5"
+    "rand-token": "^1.0.1",
+    "redis": "^3.0.2",
+    "sequelize": "^6.3.5",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
   }
 }

@@ -1,0 +1,29 @@
+{
+  "additionalProperties": false,
+  "required": [
+    "accessToken",
+    "name",
+    "description",
+    "fee"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "fee": {
+      "type": "number"
+    },
+    "status": {
+      "type": "integer"
+    },
+    "accessToken": {
+      "type": "string"
+    }
+  }
+}

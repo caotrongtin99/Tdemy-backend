@@ -1,0 +1,27 @@
+{
+    "additionalProperties": false,
+    "required": [
+        "accessToken",
+        "refreshToken"
+    ],
+    "properties": {
+        "role": {
+            "type": "integer"
+        },
+        "avatar_url": {
+            "type": "string"
+        },
+        "status": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string"
+        },
+        "accessToken": {
+            "type": "string"
+        },
+        "refreshToken": {
+            "type": "string"
+        }
+    }
+}

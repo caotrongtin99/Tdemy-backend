@@ -1,0 +1,19 @@
+{
+  "additionalProperties": true,
+  "required": [
+    "accessToken",
+    "comment",
+    "rating"
+  ],
+  "properties": {
+    "comment": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "string"
+    },
+    "accessToken": {
+      "type": "string"
+    }
+  }
+}

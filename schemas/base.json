@@ -1,0 +1,11 @@
+{
+  "additionalProperties": true,
+  "required": [
+    "accessToken"
+  ],
+  "properties": {
+    "accessToken": {
+      "type": "string"
+    }
+  }
+}

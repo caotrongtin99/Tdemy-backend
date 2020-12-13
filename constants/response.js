@@ -1,39 +1,43 @@
-const HTTP = require('./http')
+// const HTTP = require('./http')
 
-module.exports = {
-  userNotFound: {
-    type: 'userNotFound',
-    status: HTTP.BAD_REQUEST,
-    describe: 'User not found'
-  },
+module.exports = (data, result, status) => {
+  return { data: data, result: result, status: status };
+};
 
-  incorretPassword: {
-    type: 'incorretPassword',
-    status: HTTP.UNAUTHENTICATED,
-    describe: 'Incorrect password'
-  },
+// module.exports = {
+//   userNotFound: {
+//     type: 'userNotFound',
+//     status: HTTP.BAD_REQUEST,
+//     describe: 'User not found'
+//   },
 
-  userCreated: {
-    type: 'userCreated',
-    status: HTTP.CREATED,
-    describe: 'User registered with success'
-  },
+//   incorretPassword: {
+//     type: 'incorretPassword',
+//     status: HTTP.UNAUTHENTICATED,
+//     describe: 'Incorrect password'
+//   },
 
-  userFound: {
-    type: 'userFound',
-    status: HTTP.BAD_REQUEST,
-    describe: 'Already exist a user with email'
-  },
+//   userCreated: {
+//     type: 'userCreated',
+//     status: HTTP.CREATED,
+//     describe: 'User registered with success'
+//   },
 
-  userOk: {
-    type: 'userOk',
-    status: HTTP.OK,
-    describe: 'User updated with success'
-  },
+//   userFound: {
+//     type: 'userFound',
+//     status: HTTP.BAD_REQUEST,
+//     describe: 'Already exist a user with email'
+//   },
 
-  userDeleted: {
-    type: 'userDeleted',
-    status: HTTP.OK,
-    describe: 'User deleted with success'
-  }
-}
+//   userOk: {
+//     type: 'userOk',
+//     status: HTTP.OK,
+//     describe: 'User updated with success'
+//   },
+
+//   userDeleted: {
+//     type: 'userDeleted',
+//     status: HTTP.OK,
+//     describe: 'User deleted with success'
+//   }
+// }

@@ -1,0 +1,20 @@
+{
+  "additionalProperties": true,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "avatar_url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "fee": {
+      "type": "float"
+    },
+    "status": {
+      "type": "integer"
+    }
+  }
+}

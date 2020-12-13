@@ -1,0 +1,25 @@
+{
+  "additionalProperties": false,
+  "required": [
+    "accessToken",
+    "description",
+    "status"
+  ],
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "integer"
+    },
+    "video_url": {
+      "type": "string"
+    },
+    "accessToken": {
+      "type": "string"
+    },
+    "status": {
+      "type": "integer"
+    }
+  }
+}

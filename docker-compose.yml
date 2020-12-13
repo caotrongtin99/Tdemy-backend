@@ -1,0 +1,57 @@
+version: '3.4'
+
+services:
+  # tdemybackend:
+  #   image: tdemybackend
+  #   build:
+  #     context: .
+  #     dockerfile: ./Dockerfile
+  #   environment:
+  #     DATABASE_URL: postgres://admin:admin@postgres:5432/web
+  #     NODE_ENV: development
+  #     PORT: 3000
+  #   depends_on:
+  #     - postgres
+  #   ports:
+  #     - 3000:3000
+  #   command: npm run dev
+  #   volumes:
+  #     - .:/app/
+  #     - /app/node_modules
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    volumes:
+      - .docker/redis:/data
+    restart: always
+
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - .docker/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: web
+
+  # pgadmin4:
+  #   image: dpage/pgadmin4
+  #   depends_on:
+  #     - postgres
+  #   links: 
+  #     - "postgres"
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - .docker/pgadmin4/private/var/lib/pgadmin:/var/lib/pgadmin
+  #     - .docker/pgadmin4/tmp/servers.json:/pgadmin4/servers.json
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin
