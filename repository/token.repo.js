@@ -5,6 +5,14 @@ async function getAll() {
   return token;
 }
 
+async function getByUserId(user_id){
+  const token = await Token.findAll({
+    where: {
+      user_id: user_id,
+    },
+  });
+  return token;
+}
 async function getByEmail(email) {
   const token = await Token.findAll({
     where: {
@@ -48,6 +56,7 @@ async function removeByAccessToken(accessToken) {
 module.exports = {
   getAll,
   getByEmail,
+  getByUserId,
   getByAccessToken,
   removeByEmail,
   create,

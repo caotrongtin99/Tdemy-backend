@@ -21,6 +21,7 @@ let auth_role = roles => (req, res, next) => {
       }
       req.authData= {
         owner_id: data['user_id'],
+        email: data['email'],
         role: role
       };
       next();

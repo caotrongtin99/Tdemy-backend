@@ -3,6 +3,7 @@ const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const randToken = require("rand-token");
 const userRepo = require("../repository/user.repo");
+const tokenRepo = require("../repository/token.repo");
 const logger = require("../utils/log");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const redisClient = require("../utils/redis");
@@ -113,11 +114,22 @@ router.put("/:id", validation(update_schema), async function (req, res) {
 })
 
 // Deactive
-router.delete("/:id", async function (req, res) {
+router.delete("/:id", auth_role([0,1,2]), async function (req, res) {
     const id = req.params.id;
+    const authData = req.authData;
     try {
-        const result = await userRepo.remove(id);
-        res.json(response(result, 0, "success"));
+        const tokens = await tokenRepo.getByEmail(authData.email);
+        for(const token of tokens){
+            if(!redisClient.del(token.access_token)){
+                throw 'error';
+            }
+        }
+        const isDelete = await tokenRepo.removeByEmail(authData.email);
+        if(isDelete) {
+            const result = await userRepo.remove(id);
+            return res.json(response(result, 0, "success"));
+        }
+        throw 'error';
     } catch (e) {
         logger.error("Delete user error: %s", e);
         res.json(response({}, -1, "something wrong"));
