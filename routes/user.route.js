@@ -3,11 +3,12 @@ const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const userRepo = require("../repository/user.repo");
 const logger = require("../utils/log");
+const auth_role = require("../middleware/auth.mdw").auth_role;
 // const sendMail = require("../utils/mailer");
 // const mailModel = require("../utils/mail.model");
 
 // Get list user
-router.get("/", async function (req, res) {
+router.get("/", auth_role([2]), async function (req, res) {
   try {
     const user = await userRepo.getAll();
     res.json(response(user, 0, "success"));
