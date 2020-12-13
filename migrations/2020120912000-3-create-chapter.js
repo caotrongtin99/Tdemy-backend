@@ -27,7 +27,7 @@ module.exports = {
         },
         duration: {
             type: DataTypes.DATE,
-            allowNull: false,
+            allowNull: true,
         },
         video_url: {
             type: DataTypes.STRING,

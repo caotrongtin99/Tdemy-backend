@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         duration: {
             type: DataTypes.DATE,
-            allowNull: false,
+            allowNull: true,
         },
         video_url: {
             type: DataTypes.STRING,
@@ -45,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
             models.Course,
             {
                 as: 'course',
-                foreignKey: 'course_id'
+                foreignKey: 'id'
             }
         );
     };
