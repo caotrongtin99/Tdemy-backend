@@ -20,6 +20,18 @@ router.get("/", async function (req, res) {
 });
 // get preview
 
+// Get detail
+router.get("/:chapter_id", async function(req, res){
+    const course_id = req.params.id;
+    const chapter_id = req.params.chapter_id;
+    try {
+        // id, name, duration, status
+        const chapter = await chapterRepo.getById(chapter_id);
+        res.json(response(chapter, 0, "success"));
+    } catch (e) {
+        logger.error("Get all chapter error: %s", e);
+    }
+})
 // Create new chapter
 const register_chapter_schema = require("../schemas/register_chapter.json");
 router.post("/", auth_role([1]), validation(register_chapter_schema), async function (req, res) {
@@ -29,8 +41,8 @@ router.post("/", auth_role([1]), validation(register_chapter_schema), async func
     try {
         const course = await courseRepo.getById(course_id);
         if (course && course.owner_id === authData.owner_id) {
-            delete reqData.authData;
             delete reqData.accessToken;
+            delete reqData.refreshToken;
             let chapter = {...reqData, code: rand.generate(6), course_id: course_id};
             chapter = await chapterRepo.create(chapter);
             res.json(response(chapter, 0, "success"));
@@ -55,6 +67,8 @@ router.put("/:chapter_id", auth_role([1]), validation(update_chapter_schema), as
         const course = await courseRepo.getById(course_id);
         let chapter = await chapterRepo.getById(chapter_id);
         if (course && chapter && course.owner_id === authData.owner_id) {
+            delete reqData.accessToken;
+            delete reqData.refreshToken;
             chapter = await chapterRepo.update(chapter_id, reqData);
             res.json(response(chapter, 0, "success"));
         } else {
