@@ -112,7 +112,7 @@ router.post("/", validation(login_schema), async function (req, res) {
     const reqData = req.body;
     let userFind = await userRepo.getByEmail(reqData.email);
     if (userFind.length === 0) {
-        res.json(response({}, 404, "User not exists"));
+        return res.json(response({}, 404, "User not exists"));
     }
     userFind = userFind[0];
     if (!bcrypt.compareSync(reqData.password, userFind.password)) {
