@@ -76,7 +76,7 @@ router.put("/:id", auth_role([1]), validation(update_course_schema), async funct
     try {
         let course = await courseRepo.getById(id);
         if (course && course.owner_id === authData.owner_id) {
-            delete reqData.authData;
+            delete reqData.accessToken;
             course = await courseRepo.update(id, reqData);
             res.json(response(course, 0, "success"));
         } else {

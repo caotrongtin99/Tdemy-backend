@@ -33,12 +33,12 @@ router.post("/", validation(register_schema), async function (req, res) {
         const cacheCode = redisClient.hmset(confirm_code, user);
         const expireTime = redisClient.expire(confirm_code, process.env.CONFIRM_EXP || 86400);
 
-        if(process.env.DEBUG === 'true'){
+        if (process.env.DEBUG === 'true') {
             let result = await userRepo.create(user);
             result = {...result.dataValues};
             delete result.password;
             return res.json(response(result, 0, "success"));
-        }else if( cacheCode && expireTime) {
+        } else if (cacheCode && expireTime) {
             logger.info("Create confirm code");
             // sendMail(mailModel);
             return res.json(response({}, 0, "Please check your mail and confirm register"));
@@ -98,8 +98,14 @@ router.put("/:id", validation(update_schema), async function (req, res) {
     const id = req.params.id;
     const user = req.body;
     try {
-        const result = await userRepo.update(id, user);
-        res.json(response(result, 0, "success"));
+        const isDeleted = redisClient.del(user.accessToken);
+        if (isDeleted) {
+            delete user.accessToken;
+            delete user.refreshToken;
+            const result = await userRepo.update(id, user);
+            return res.json(response(result, 0, "success"));
+        }
+        throw 'error';
     } catch (e) {
         logger.error("Update user error: %s", e);
         res.json(response({}, -1, "something wrong"));
