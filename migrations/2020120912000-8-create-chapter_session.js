@@ -8,7 +8,7 @@ module.exports = {
                 primaryKey: true,
             },
             user_id: {
-                type: DataTypes.STRING,
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
                     model: 'user',
@@ -17,15 +17,19 @@ module.exports = {
                 onUpdate: 'cascade',
                 onDelete: 'cascade'
             },
-            course_id: {
-                type: DataTypes.STRING,
+            chapter_id: {
+                type: DataTypes.UUID,
                 allowNull: false,
                 references: {
-                    model: 'course',
+                    model: 'chapter',
                     key: 'id'
                 },
                 onUpdate: 'cascade',
                 onDelete: 'cascade'
+            },
+            cur_pos:{
+                type: DataTypes.INTEGER,
+                allowNull: false,
             }
         });
     },

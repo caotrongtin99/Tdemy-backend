@@ -2,7 +2,10 @@ const redisClient = require("../utils/redis");
 const logger = require("../utils/log");
 const response = require("../constants/response");
 
-let auth_role = role => (req, res, next) => {
+let auth_role = roles => (req, res, next) => {
+  if(!req.body.accessToken){
+    return res.status(400).json(response({},400, "Access token not valid"));
+  }
   const reqData = req.body;
   redisClient.hgetall(reqData.accessToken, async function (err, data) {
     // accessToken not exists
@@ -10,11 +13,16 @@ let auth_role = role => (req, res, next) => {
       logger.info("AccessToken %s not exist in redis!", reqData.accessToken);
       return res.status(400).json(response({},400, "Access token not valid"));
     } else {
-      logger.info("AccessToken data: %s", data);
-      if(!role.includes(data.role)){
-        logger.info("Role [%s] not have privileges!", data.role);
+      logger.info('AccessToken data: ', data);
+      const role = Number(data['role']);
+      if(!roles.includes(role)){
+        logger.info("Role not have privileges!: ", role);
         return res.status(400).json(response({},400, "You do not privileges"));
       }
+      req.authData= {
+        owner_id: data['user_id'],
+        role: role
+      };
       next();
     }
   });

@@ -123,6 +123,7 @@ router.post("/", validation(login_schema), async function (req, res) {
     logger.info("Gen accessToken %s", accessToken);
     const isSaveSuccess = update_accessToken_redis(accessToken, {
         email: userFind.email,
+        user_id: userFind.id,
         role: userFind.role,
     });
     logger.info(

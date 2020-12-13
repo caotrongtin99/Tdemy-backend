@@ -50,11 +50,11 @@ module.exports = (sequelize, DataTypes) => {
                 foreignKey: 'owner_id'
             }
         );
-        Feedback.chapters = Feedback.belongsTo(
+        Feedback.course = Feedback.belongsTo(
             models.Course,
             {
                 as: 'course',
-                foreignKey: 'course_id',
+                foreignKey: 'id',
                 onDelete: 'cascade',
                 hooks: true
             }

@@ -1,14 +1,28 @@
 {
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": [
     "accessToken",
-    "password"
+    "name",
+    "description",
+    "fee"
   ],
   "properties": {
-    "email": {
+    "name": {
       "type": "string"
     },
-    "password": {
+    "avatar_url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "fee": {
+      "type": "number"
+    },
+    "status": {
+      "type": "integer"
+    },
+    "accessToken": {
       "type": "string"
     }
   }

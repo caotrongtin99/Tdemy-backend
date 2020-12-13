@@ -12,7 +12,8 @@ async function getNameById(id){
       id: id,
     },
     attributes: ["name"]
-  })
+  });
+  return user;
 }
 
 async function getById(id) {

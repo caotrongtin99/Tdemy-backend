@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             models.Course,
             {
                 as: 'course',
-                foreignKey: 'course_id',
+                foreignKey: 'id',
                 onDelete: 'cascade',
                 hooks: true
             }
@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
             models.User,
             {
                 as: 'user',
-                foreignKey: 'user_id',
+                foreignKey: 'id',
                 onDelete: 'cascade',
                 hooks: true
             }
