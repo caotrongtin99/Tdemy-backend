@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: 'cascade',
             onDelete: 'cascade'
         },
+        category: {
+          type: DataTypes.ARRAY(DataTypes.STRING),
+          allowNull: true
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false,

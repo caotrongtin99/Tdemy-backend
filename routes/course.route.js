@@ -16,18 +16,29 @@ router.use('/:id/feedback', require("./feedback.route"));
 router.get("/", async function (req, res) {
     const limit = req.query.limit;
     const offset = req.query.offset;
+    const type = req.body.type;
+    const type_id = req.body.type_id;
     try {
-        // return student number, chapter
         let data = [];
-        const courses = await courseRepo.getAll(limit, offset);
+        let courses;
+        switch (type) {
+            case "student":
+                courses = await courseRepo.getAll(limit, offset);
+                break;
+            case "teacher":
+                courses = await courseRepo.getAllByOwnerId(type_id, limit, offset);
+                break;
+            default:
+                courses = await courseRepo.getAll(limit, offset);
+        }
+
         for (const course of courses) {
             const chapter_number = await chapterRepo.countByCourseId(course.id);
-            const enroll = 0;
             const owner_name = await userRepo.getNameById(course.owner_id);
+            const enroll = 0;
             const isEnroll = false;
             data.push({...course.dataValues, chapter_number: chapter_number, owner_name: owner_name.name, enroll: enroll, isEnroll:isEnroll});
         }
-        ;
         res.json(response(data, 0, "success"));
     } catch (e) {
         logger.error("Get all course error: %s", e);
@@ -44,6 +55,7 @@ router.post("/", auth_role([1]), validation(register_course_schema), async funct
             code: rand.generate(6),
             owner_id: authData.owner_id,
             name: reqData.name,
+            category: reqData.category,
             avatar_url: reqData.avatar_url,
             description: reqData.description,
             fee: reqData.fee

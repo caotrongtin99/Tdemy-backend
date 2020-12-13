@@ -7,6 +7,9 @@
     "fee"
   ],
   "properties": {
+    "category": {
+      "type": "array"
+    },
     "name": {
       "type": "string"
     },
