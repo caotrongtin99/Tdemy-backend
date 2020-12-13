@@ -29,6 +29,7 @@ router.post("/", auth_role([1]), validation(register_chapter_schema), async func
         const course = await courseRepo.getById(course_id);
         if(course && course.owner_id === authData.owner_id ){
             delete reqData.authData;
+            delete reqData.accessToken;
             const chapter = await chapterRepo.create(reqData);
             res.json(response(chapter, 0, "success"));
         }else{

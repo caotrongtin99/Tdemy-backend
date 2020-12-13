@@ -21,7 +21,8 @@ router.get("/", async function (req, res) {
             const chapter_number = await chapterRepo.countByCourseId(course.id);
             const enroll = 0;
             const owner_name = await userRepo.getNameById(course.owner_id);
-            data.push({...course.dataValues, chapter_number: chapter_number, owner_name: owner_name.name, enroll: enroll});
+            const isEnroll = false;
+            data.push({...course.dataValues, chapter_number: chapter_number, owner_name: owner_name.name, enroll: enroll, isEnroll:isEnroll});
         }
         ;
         res.json(response(data, 0, "success"));
@@ -61,7 +62,8 @@ router.get("/:id", async function (req, res) {
         const chapter_list = await chapterRepo.getAllByCourseId(id);
         const enroll = 0;
         const owner_name = await userRepo.getNameById(course.owner_id);
-        let data = {...course.dataValues, owner_name: owner_name.name, enroll:enroll, chapters: chapter_list};
+        const isEnroll = false;
+        let data = {...course.dataValues, owner_name: owner_name.name, enroll:enroll, isEnroll:isEnroll, chapters: chapter_list};
         res.json(response(data, 0, "success"));
     } catch (e) {
         logger.error("Get detail course error: %s", e);
