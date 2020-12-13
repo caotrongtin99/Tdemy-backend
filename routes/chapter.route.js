@@ -24,7 +24,7 @@ const register_chapter_schema = require("../schemas/register_chapter.json");
 router.post("/", auth_role([1]), validation(register_chapter_schema), async function (req, res) {
     const reqData = req.body;
     const course_id = req.params.id;
-    const authData = reqData.authData;
+    const authData = req.authData;
     try {
         const course = await courseRepo.getById(course_id);
         if(course && course.owner_id === authData.owner_id ){
@@ -47,7 +47,7 @@ router.put("/:chapter_id", auth_role([1]), validation(update_chapter_schema), as
     const reqData = req.body;
     const course_id = req.params.id;
     const chapter_id = req.params.chapter_id;
-    const authData = reqData.authData;
+    const authData = req.authData;
     try{
         const course = await courseRepo.getById(course_id);
         let chapter = await chapterRepo.getById(chapter_id);
@@ -68,7 +68,7 @@ router.put("/:chapter_id", auth_role([1]), validation(update_chapter_schema), as
 router.delete("/:chapter_id", auth_role([1]), async function(req, res){
     const course_id = req.params.id;
     const chapter_id = req.params.chapter_id;
-    const authData = req.body.authData;
+    const authData = req.authData;
     try{
         const course = await courseRepo.getById(course_id);
         if(course && course.owner_id === authData.owner_id){
