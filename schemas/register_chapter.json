@@ -1,15 +1,25 @@
 {
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": [
     "accessToken",
-    "password"
+    "description",
+    "status"
   ],
   "properties": {
-    "email": {
+    "description": {
       "type": "string"
     },
-    "password": {
+    "duration": {
+      "type": "integer"
+    },
+    "video_url": {
       "type": "string"
+    },
+    "accessToken": {
+      "type": "string"
+    },
+    "status": {
+      "type": "integer"
     }
   }
 }
