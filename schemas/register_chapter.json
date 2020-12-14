@@ -1,7 +1,6 @@
 {
   "additionalProperties": false,
   "required": [
-    "accessToken",
     "description",
     "status"
   ],
@@ -13,9 +12,6 @@
       "type": "integer"
     },
     "video_url": {
-      "type": "string"
-    },
-    "accessToken": {
       "type": "string"
     },
     "status": {

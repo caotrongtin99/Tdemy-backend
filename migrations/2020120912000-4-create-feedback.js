@@ -43,7 +43,7 @@ module.exports = {
             type: DataTypes.DATE,
             allowNull: false,
         },
-        c: {
+        updated_at: {
             type: DataTypes.DATE,
             allowNull: false,
         }

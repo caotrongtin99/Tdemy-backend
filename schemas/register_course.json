@@ -1,9 +1,10 @@
 {
   "additionalProperties": false,
   "required": [
-    "accessToken",
     "name",
+    "category",
     "description",
+    "short_description",
     "fee"
   ],
   "properties": {
@@ -25,7 +26,7 @@
     "status": {
       "type": "integer"
     },
-    "accessToken": {
+    "short_description": {
       "type": "string"
     }
   }

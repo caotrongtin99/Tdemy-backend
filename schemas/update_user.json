@@ -1,9 +1,5 @@
 {
     "additionalProperties": false,
-    "required": [
-        "accessToken",
-        "refreshToken"
-    ],
     "properties": {
         "role": {
             "type": "integer"

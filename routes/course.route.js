@@ -16,7 +16,6 @@ router.use('/:id/feedback', require("./feedback.route"));
 // Enrollment
 router.post('/:id/enroll', auth_role([0,1]), async function (req, res) {
     const course_id = req.params.id;
-    const reqData = req.body;
     const authData = req.authData;
     try{
         const course = await courseRepo.getById(course_id);
@@ -25,19 +24,23 @@ router.post('/:id/enroll', auth_role([0,1]), async function (req, res) {
                 course_id: course_id,
                 user_id: authData.owner_id
             }
-            console.log(data);
-            const enroll = await enrollRepo.create(data);
-            res.json(response(course, 0, "success"));
+            let enroll = await enrollRepo.create(data);
+            enroll = {
+                ...enroll,
+                accessToken: authData.accessToken,
+                refreshToken: authData.refreshToken
+            }
+            return res.json(response(enroll, 0, "success"));
         }else{
-            res.json(response({},404,"Course not exist to enroll"));
+            return res.json(response({},404,"Course not exist to enroll"));
         }
     }catch (e) {
         logger.error("Enroll to course error ", e);
-        res.json(response({},-1,"Enroll error"));
+        return res.json(response({},-1,"Enroll error"));
     }
 })
 // Get All course
-router.get("/", async function (req, res) {
+router.post("/", auth_role([]), async function (req, res) {
     const limit = req.query.limit;
     const offset = req.query.offset;
     const type = req.body.type;
@@ -66,50 +69,62 @@ router.get("/", async function (req, res) {
             delete course_data.User;
             data.push(course_data);
         }
-        res.json(response(data, 0, "success"));
+        return res.json(response(data, 0, "success"));
     } catch (e) {
         logger.error("Get all course error: %s", e);
     }
+    res.json(response({},-1,"something wrong"));
 });
 
 // Create new Course
 const register_course_schema = require("../schemas/register_course.json");
-router.post("/", auth_role([1]), validation(register_course_schema), async function (req, res) {
+router.post("/new", auth_role([1]), validation(register_course_schema), async function (req, res) {
     const reqData = req.body;
     const authData = req.authData;
     try {
         const course = {
+            ...reqData,
             code: rand.generate(6),
-            owner_id: authData.owner_id,
-            name: reqData.name,
-            category: reqData.category,
-            avatar_url: reqData.avatar_url,
-            description: reqData.description,
-            fee: reqData.fee
+            owner_id: authData.owner_id
         };
-        const result = await courseRepo.create(course);
-        res.json(response(result, 0, "success"));
+        let result = await courseRepo.create(course);
+        result = {
+            ...result,
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken
+        }
+        return res.json(response(result, 0, "success"));
     } catch (e) {
         logger.error("Create new Course error: ", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({}, -1, "something wrong"));
     }
 })
 
 // Get detail course
-router.get("/:id", async function (req, res) {
+router.get("/:id", auth_role([]), async function (req, res) {
     const id = req.params.id;
+    const authData = req.authData;
     try {
         const course = await courseRepo.getById(id);
         const chapter_list = await chapterRepo.getAllByCourseId(id);
         const enroll = 0;
         const isEnroll = false;
 
-        let data = {...course.dataValues, owner_name: course.User.name, enroll:enroll, isEnroll:isEnroll, chapter_number: chapter_list.count, chapters: chapter_list.rows};
+        let data = {
+            ...course.dataValues,
+            owner_name: course.User.name,
+            enroll:enroll,
+            isEnroll:isEnroll,
+            chapter_number: chapter_list.count,
+            chapters: chapter_list.rows,
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken
+        };
         delete data.User;
-        res.json(response(data, 0, "success"));
+        return res.json(response(data, 0, "success"));
     } catch (e) {
         logger.error("Get detail course error: %s", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({}, -1, "something wrong"));
     }
 })
 
@@ -122,17 +137,20 @@ router.put("/:id", auth_role([1]), validation(update_course_schema), async funct
     try {
         let course = await courseRepo.getById(id);
         if (course && course.owner_id === authData.owner_id) {
-            delete reqData.accessToken;
-            delete reqData.refreshToken;
             course = await courseRepo.update(id, reqData);
-            res.json(response(course, 0, "success"));
+            course = {
+                ...course,
+                accessToken: authData.accessToken,
+                refreshToken: authData.refreshToken
+            }
+            return res.json(response(course, 0, "success"));
         } else {
             logger.info("Update course not have permission");
             return res.json(response({}, 400, "You do not have permission"));
         }
     } catch (e) {
         logger.error("Update course error: %s", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({}, -1, "something wrong"));
     }
 })
 
@@ -143,15 +161,19 @@ router.delete("/:id", auth_role([1, 2]), async function (req, res) {
     try {
         let course = await courseRepo.getById(id);
         if (course && course.owner_id === authData.owner_id) {
-            const result = await courseRepo.remove(id);
-            logger.info("Delete course success");
+            let result = await courseRepo.remove(id);
+            result = {
+                ...result,
+                accessToken: authData.accessToken,
+                refreshToken: authData.refreshToken
+            }
             return res.json(response(result, 0, "success"));
         } else {
             return res.json(response({}, 400, "You do not have "))
         }
     } catch (e) {
         logger.error("Delete course error: %s", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({}, -1, "something wrong"));
     }
 })
 module.exports = router;

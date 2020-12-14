@@ -20,12 +20,16 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade'
         },
         category: {
-          type: DataTypes.ARRAY(DataTypes.STRING),
-          allowNull: true
+            type: DataTypes.ARRAY(DataTypes.STRING),
+            allowNull: true
         },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        short_description: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         avatar_url: {
             type: DataTypes.STRING,
@@ -69,7 +73,7 @@ module.exports = (sequelize, DataTypes) => {
                 hooks: true
             }
         );
-    
+
         Course.feedbacks = Course.hasMany(
             models.Feedback,
             {

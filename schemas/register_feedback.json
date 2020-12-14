@@ -1,7 +1,6 @@
 {
   "additionalProperties": true,
   "required": [
-    "accessToken",
     "comment",
     "rating"
   ],
@@ -10,9 +9,6 @@
       "type": "string"
     },
     "rating": {
-      "type": "string"
-    },
-    "accessToken": {
       "type": "string"
     }
   }

@@ -8,28 +8,35 @@ const auth_role = require("../middleware/auth.mdw").auth_role;
 const logger = require("../utils/log");
 
 // Get All chapter
-router.get("/", async function (req, res) {
+router.get("/", auth_role([]), async function (req, res) {
     const course_id = req.params.id;
+    const authData = req.authData;
     try {
-        // id, name, duration, status
         const chapter = await chapterRepo.getAllByCourseId(course_id);
         res.json(response(chapter, 0, "success"));
     } catch (e) {
         logger.error("Get all chapter error: %s", e);
+        return res.json(response({},-1,"something wrong"));
     }
 });
 // get preview
 
 // Get detail
-router.get("/:chapter_id", async function(req, res){
-    const course_id = req.params.id;
+router.get("/:chapter_id", auth_role([]), async function(req, res){
+    // const course_id = req.params.id;
+    const authData = req.authData;
     const chapter_id = req.params.chapter_id;
     try {
-        // id, name, duration, status
-        const chapter = await chapterRepo.getById(chapter_id);
+        let chapter = await chapterRepo.getById(chapter_id);
+        chapter = {
+            ...chapter,
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken
+        }
         res.json(response(chapter, 0, "success"));
     } catch (e) {
         logger.error("Get all chapter error: %s", e);
+        return res.json(response({},-1,"something wrong"));
     }
 })
 // Create new chapter
@@ -40,11 +47,15 @@ router.post("/", auth_role([1]), validation(register_chapter_schema), async func
     const authData = req.authData;
     try {
         const course = await courseRepo.getById(course_id);
+        console.log(course);
         if (course && course.owner_id === authData.owner_id) {
-            delete reqData.accessToken;
-            delete reqData.refreshToken;
             let chapter = {...reqData, code: rand.generate(6), course_id: course_id};
             chapter = await chapterRepo.create(chapter);
+            chapter = {
+                ...chapter,
+                accessToken: authData.accessToken,
+                refreshToken: authData.refreshToken
+            }
             res.json(response(chapter, 0, "success"));
         } else {
             logger.info("Create chapter not permission");
@@ -52,7 +63,7 @@ router.post("/", auth_role([1]), validation(register_chapter_schema), async func
         }
     } catch (e) {
         logger.error("Create new chapter error: ", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({},-1,"something wrong"));
     }
 })
 
@@ -67,17 +78,20 @@ router.put("/:chapter_id", auth_role([1]), validation(update_chapter_schema), as
         const course = await courseRepo.getById(course_id);
         let chapter = await chapterRepo.getById(chapter_id);
         if (course && chapter && course.owner_id === authData.owner_id) {
-            delete reqData.accessToken;
-            delete reqData.refreshToken;
             chapter = await chapterRepo.update(chapter_id, reqData);
-            res.json(response(chapter, 0, "success"));
+            chapter = {
+                ...chapter,
+                accessToken: authData.accessToken,
+                refreshToken: authData.refreshToken
+            }
+            return res.json(response(chapter, 0, "success"));
         } else {
             logger.info("Update chapter not permission or not exist");
             return res.json(response({}, 400, "You not have permission"));
         }
     } catch (e) {
         logger.error("Update chapter error: %s", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({},-1,"something wrong"));
     }
 })
 
@@ -89,7 +103,12 @@ router.delete("/:chapter_id", auth_role([1]), async function (req, res) {
     try {
         const course = await courseRepo.getById(course_id);
         if (course && course.owner_id === authData.owner_id) {
-            const result = await chapterRepo.remove(chapter_id);
+            let result = await chapterRepo.remove(chapter_id);
+            result = {
+                ...result,
+                accessToken: authData.accessToken,
+                refreshToken: authData.refreshToken
+            }
             res.json(response(result, 0, "success"));
         } else {
             logger.info("Delete chapter not permission");
@@ -97,7 +116,7 @@ router.delete("/:chapter_id", auth_role([1]), async function (req, res) {
         }
     } catch (e) {
         logger.error("Delete chapter error: %s", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({},-1,"something wrong"));
     }
 })
 module.exports = router;

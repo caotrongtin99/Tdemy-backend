@@ -1,13 +1,11 @@
 const Chapter = require("../models").Chapter;
 
 async function getAll() {
-	const chapters = await Chapter.findAll();
-	return chapters;
+	return  await Chapter.findAll();
 }
 
 async function getById(id) {
-	const chapter = await Chapter.findByPk(id);
-	return chapter;
+	return  await Chapter.findByPk(id);
 }
 
 async function countByCourseId(course_id){
@@ -26,7 +24,6 @@ async function getAllByCourseId(course_id){
 		},
 		order: [["code", "ASC"]]
 	})
-	console.log(chapters.dataValues);
 	return chapters;
 }
 async function getPreviewChapter(course_id){

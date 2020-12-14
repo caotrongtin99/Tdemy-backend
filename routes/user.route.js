@@ -30,9 +30,9 @@ router.post("/", validation(register_schema), async function (req, res) {
         if (userFind.length !== 0) {
             return res.json(response({}, 409, "email exist"));
         }
-        const confirm_code = 'uc' + randToken.generate(80);
-        const cacheCode = redisClient.hmset(confirm_code, user);
-        const expireTime = redisClient.expire(confirm_code, process.env.CONFIRM_EXP || 86400);
+        // const confirm_code = 'uc' + randToken.generate(80);
+        // const cacheCode = redisClient.hmset(confirm_code, user);
+        // const expireTime = redisClient.expire(confirm_code, process.env.CONFIRM_EXP || 86400);
 
         if (process.env.DEBUG === 'true') {
             let result = await userRepo.create(user);
@@ -95,21 +95,25 @@ router.get("/:id", async function (req, res) {
 
 // Update
 const update_schema = require("../schemas/update_user.json");
-router.put("/:id", validation(update_schema), async function (req, res) {
+router.put("/:id", auth_role([0,1]), validation(update_schema), async function (req, res) {
     const id = req.params.id;
-    const user = req.body;
+    const data = req.body;
+    const authData = req.authData;
     try {
-        const isDeleted = redisClient.del(user.accessToken);
-        if (isDeleted) {
-            delete user.accessToken;
-            delete user.refreshToken;
-            const result = await userRepo.update(id, user);
+        const user = userRepo.getById(id);
+        if(user && id === authData.owner_id) {
+            if (req.body.role) {
+                redisClient.del(req.headers['x-access-token']);
+            }
+            const result = await userRepo.update(id, data);
             return res.json(response(result, 0, "success"));
+        }else{
+            logger.info("Update user not permission");
+            return res.json(response({},400,"You do not have permission"));
         }
-        throw 'error';
     } catch (e) {
         logger.error("Update user error: %s", e);
-        res.json(response({}, -1, "something wrong"));
+        return res.json(response({}, -1, "something wrong"));
     }
 })
 
@@ -120,9 +124,7 @@ router.delete("/:id", auth_role([0,1,2]), async function (req, res) {
     try {
         const tokens = await tokenRepo.getByEmail(authData.email);
         for(const token of tokens){
-            if(!redisClient.del(token.access_token)){
-                throw 'error';
-            }
+            redisClient.del(token.access_token);
         }
         const isDelete = await tokenRepo.removeByEmail(authData.email);
         if(isDelete) {
