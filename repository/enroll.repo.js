@@ -38,22 +38,13 @@ async function getUserByCourseId(course_id, limit, offset){
     })
 }
 async function getCourseByUserId(user_id, limit, offset){
-    console.log("into", user_id);
     let res = await Enroll.findAndCountAll({
         where:{
             user_id: user_id
         },
         limit: limit,
-        offset: offset,
-        include: Course
-            // model: Course,
-            // include: [{
-            //     model: User,
-            //     attributes: ['name']
-            // }]
-        // }
+        offset: offset
     });
-    console.log(res.rows);
     return res;
 }
 

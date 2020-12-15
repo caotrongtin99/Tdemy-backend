@@ -20,6 +20,11 @@ router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
     try {
         const course = await courseRepo.getById(course_id);
         if (course) {
+            const isEnroll = await enrollRepo.checkEnroll(authData.owner_id, course_id);
+            if(isEnroll){
+                logger.info("Enroll exist");
+                return res.json(response({}, -2, "You had enroll before"));
+            }
             let data = {
                 course_id: course_id,
                 user_id: authData.owner_id
@@ -41,18 +46,26 @@ router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
 })
 // Get All course
 router.post("/", auth_role([]), async function (req, res) {
-    const limit = req.query.limit;
-    const offset = req.query.offset;
-    const type = req.body.type;
+    const limit = req.query.limit || 1000;
+    const offset = req.query.offset || 0;
+    const type = req.body.type || "";
     const type_id = req.body.type_id;
     const authData = req.authData;
-    console.log(authData);
     try {
         let data = [];
         let courses;
         switch (type) {
             case "student":
-                courses = await enrollRepo.getCourseByUserId(type_id, limit, offset)
+                let course_enroll = [];
+                const enrollList = await enrollRepo.getCourseByUserId(type_id);
+                for(const enroll of enrollList.rows){
+                    const course = await courseRepo.getById(enroll.course_id);
+                    course_enroll.push(course);
+                }
+                courses = {
+                    count: enrollList.count,
+                    rows: course_enroll
+                }
                 break;
             case "teacher":
                 courses = await courseRepo.getAllByOwnerId(type_id, limit, offset);
@@ -76,8 +89,8 @@ router.post("/", auth_role([]), async function (req, res) {
             array: data,
             type: type,
             course_number: courses.count,
-            // accessToken: authData.accessToken,
-            // refreshToken: authData.refreshToken
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken
         }
         return res.json(response(result, 0, "success"));
     } catch (e) {
@@ -117,8 +130,8 @@ router.get("/:id", auth_role([]), async function (req, res) {
     try {
         const course = await courseRepo.getById(id);
         const chapter_list = await chapterRepo.getAllByCourseId(id);
-        const enroll = 0;
-        const isEnroll = false;
+        const enroll = await enrollRepo.countByCourseId(id);
+        const isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
 
         let data = {
             ...course.dataValues,

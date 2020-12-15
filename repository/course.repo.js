@@ -12,11 +12,24 @@ async function getAll(limit, offset) {
         }
     });
 }
-
-async function getAllByOwnerId(user_id, limit, offset) {
+async function getCourseByStudentId(student_id, limit, offset) {
     return await Course.findAndCountAll({
         where: {
-            owner_id: user_id
+            owner_id: student_id
+        },
+        limit: limit,
+        offset: offset,
+        include: {
+            model: User,
+            attributes: ['name']
+        }
+    })
+}
+
+async function getAllByOwnerId(teacher_id, limit, offset) {
+    return await Course.findAndCountAll({
+        where: {
+            owner_id: teacher_id
         },
         limit: limit,
         offset: offset,
@@ -60,6 +73,7 @@ async function remove(id) {
 }
 
 module.exports = {
+    getCourseByStudentId,
     getAllByOwnerId,
     getAll,
     getById,
