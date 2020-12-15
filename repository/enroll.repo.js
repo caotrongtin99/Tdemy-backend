@@ -3,12 +3,30 @@ const User = require("../models").User;
 const Course = require("../models").Course;
 
 async function getAll(limit, offset) {
-    return  await Enroll.findAll({
+    return  await Enroll.findAndCountAll({
         limit: limit,
         offset: offset
     });
 }
 
+
+async function checkEnroll(user_id, course_id){
+    const res = await Enroll.findOne({
+        where:{
+            course_id: course_id,
+            user_id: user_id
+        }
+    })
+    return res !== null;
+}
+async function countByCourseId(course_id){
+    const count = await Enroll.count({
+		where:{
+			course_id: course_id
+		},
+	})
+	return count || 0;
+}
 async function getUserByCourseId(course_id, limit, offset){
     return await Enroll.findAndCountAll({
         where:{
@@ -20,22 +38,13 @@ async function getUserByCourseId(course_id, limit, offset){
     })
 }
 async function getCourseByUserId(user_id, limit, offset){
-    console.log("into", user_id);
     let res = await Enroll.findAndCountAll({
         where:{
             user_id: user_id
         },
         limit: limit,
-        offset: offset,
-        include: Course
-            // model: Course,
-            // include: [{
-            //     model: User,
-            //     attributes: ['name']
-            // }]
-        // }
+        offset: offset
     });
-    console.log(res.rows);
     return res;
 }
 
@@ -72,7 +81,9 @@ async function remove(id) {
 
 module.exports = {
     getAllByEnrollId,
+    checkEnroll,
     getUserByCourseId,
+    countByCourseId,
     getCourseByUserId,
     getAll,
     getById,

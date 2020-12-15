@@ -3,7 +3,7 @@ const User = require("../models").User;
 const Chapter = require("../models").Chapter;
 
 async function getAll(limit, offset) {
-    return await Course.findAll({
+    return await Course.findAndCountAll({
         limit: limit,
         offset: offset,
         include: {
@@ -12,14 +12,31 @@ async function getAll(limit, offset) {
         }
     });
 }
-
-async function getAllByOwnerId(user_id, limit, offset) {
-    return await Course.findAll({
+async function getCourseByStudentId(student_id, limit, offset) {
+    return await Course.findAndCountAll({
         where: {
-            owner_id: user_id
+            owner_id: student_id
         },
         limit: limit,
-        offset: offset
+        offset: offset,
+        include: {
+            model: User,
+            attributes: ['name']
+        }
+    })
+}
+
+async function getAllByOwnerId(teacher_id, limit, offset) {
+    return await Course.findAndCountAll({
+        where: {
+            owner_id: teacher_id
+        },
+        limit: limit,
+        offset: offset,
+        include: {
+            model: User,
+            attributes: ['name']
+        }
     })
 }
 
@@ -56,6 +73,7 @@ async function remove(id) {
 }
 
 module.exports = {
+    getCourseByStudentId,
     getAllByOwnerId,
     getAll,
     getById,

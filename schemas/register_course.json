@@ -3,8 +3,7 @@
   "required": [
     "name",
     "category",
-    "short_description",
-    "accessToken"
+    "short_description"
   ],
   "properties": {
     "category": {

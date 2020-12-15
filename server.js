@@ -19,7 +19,8 @@ app.use(bodyParser.json({ limit: "5mb" }));
 app.use("/api/auth", require("./routes/auth.route"));
 app.use("/api/users", require("./routes/user.route"));
 app.use("/api/courses", require("./routes/course.route"));
-// app.use("/api/wishlist", require("./routes/wishList.route"));
+app.use("/api/wishlist", require("./routes/wishList.route"));
+// app.use("/api/state", require("./routes/video_state.route"));
 
 app.use(function (req, res, next) {
   res.status(404).send({
