@@ -49,6 +49,7 @@ router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
 router.post("/", auth_role([]), async function (req, res) {
     const limit = req.query.limit || 1000;
     const offset = req.query.offset || 0;
+    const sort = req.query.sort;
     const type = req.body.type || "";
     const type_id = req.body.type_id;
     const authData = req.authData;
@@ -84,17 +85,36 @@ router.post("/", auth_role([]), async function (req, res) {
                     count: mostview_course.length
                 }
                 break;
+            case "category":
+                let category = req.query.category;
+                category = category.split(',');
+                courses = await courseRepo.getByCategory(category, limit, offset);
+                break;
+            case "enroll":
+                let mostenroll_course = [];
+                courses = await enrollRepo.getMostEnroll(limit, offset);
+                console.log(courses);
+                for(const enroll of courses){
+                    const course = await courseRepo.getById(enroll.course_id);
+                    mostenroll_course.push(course);
+                }
+                courses = {
+                    rows: mostenroll_course,
+                    count: mostenroll_course.length
+                }
+                break;
             case "new":
             default:
                 courses = await courseRepo.getAll(limit, offset);
         }
 
         for (const course of courses.rows) {
-            const count = await chapterRepo.countByCourseId(course.id);
-            const enroll = await enrollRepo.countByCourseId(course.id);
+            const chapter_count = await chapterRepo.countByCourseId(course.id);
+            const enroll_count = await enrollRepo.countByCourseId(course.id);
+            const feedback_count = 0;
             let isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
 
-            let course_data = { ...course.dataValues, count: count, owner_name: course.User.name, enroll: enroll, isEnroll: isEnroll };
+            let course_data = { ...course.dataValues, feedback_count:feedback_count, chapter_count: chapter_count, owner_name: course.User.name, enroll_count: enroll_count, isEnroll: isEnroll };
             delete course_data.User;
             data.push(course_data);
         }
@@ -146,21 +166,28 @@ router.get("/:id", auth_role([]), async function (req, res) {
             return res.json(response({},404,"Course not found"));
         }
         const chapter_list = await chapterRepo.getAllByCourseId(id);
-        const enroll = await enrollRepo.countByCourseId(id);
+        const feedback_list = [];
+        const enroll_count = await enrollRepo.countByCourseId(id);
         const isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
+        const feedback_count = 0;
 
         let data = {
             ...course.dataValues,
             owner_name: course.User.name,
-            enroll: enroll,
+            enroll_count: enroll_count,
             isEnroll: isEnroll,
-            count: chapter_list.count,
+            chapter_count: chapter_list.count,
             chapters: chapter_list.rows,
+            feedback: feedback_list,
+            feedback_count: feedback_count,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         };
+        let user = {...data.User.dataValues};
+        delete user.password;
+        delete user.ref_token;
         delete data.User;
-        console.log(authData);
+        data = {...data, teacher: user};
         await trackingRepo.create({
             owner_id: authData.owner_id,
             course_id: id,
