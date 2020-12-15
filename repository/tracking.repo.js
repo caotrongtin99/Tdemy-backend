@@ -1,10 +1,18 @@
 const Tracking = require("../models").Tracking;
-
+const sequelize = require("sequelize");
 async function getAll() {
     const trackings = await Tracking.findAll();
     return trackings;
 }
-
+async function getMostView(limit, offset){
+    return await Tracking.findAll({
+        attributes: ['course_id', [sequelize.fn('count', sequelize.col('course_id')), 'count']],
+        group: ['course_id'],
+        order: [['count','DESC']],
+        limit: limit,
+        offset: offset
+    })
+}
 async function getAllByCourseId(course_id, limit, offset){
     return await Tracking.findAll({
         where:{
@@ -51,6 +59,7 @@ async function remove(id) {
 }
 
 module.exports = {
+    getMostView,
     getAllByCourseId,
     getAllByUserId,
     getAll,

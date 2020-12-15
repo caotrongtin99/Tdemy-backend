@@ -1,10 +1,12 @@
 {
   "additionalProperties": false,
   "required": [
-    "description",
-    "status"
+    "title"
   ],
   "properties": {
+    "title": {
+      "type": "string"
+    },
     "description": {
       "type": "string"
     },

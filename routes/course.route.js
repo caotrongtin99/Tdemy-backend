@@ -4,6 +4,7 @@ const response = require("../constants/response");
 const courseRepo = require("../repository/course.repo");
 const chapterRepo = require("../repository/chapter.repo");
 const enrollRepo = require("../repository/enroll.repo");
+const trackingRepo = require("../repository/tracking.repo");
 const userRepo = require("../repository/user.repo");
 const logger = require("../utils/log");
 const rand = require("rand-token");
@@ -71,6 +72,18 @@ router.post("/", auth_role([]), async function (req, res) {
                 courses = await courseRepo.getAllByOwnerId(type_id, limit, offset);
                 break;
             case "view":
+                let mostview_course = [];
+                let courses_list = await trackingRepo.getMostView(limit, offset);
+                console.log(courses_list);
+                for(const view of courses_list){
+                    const course = await courseRepo.getById(view.course_id);
+                    mostview_course.push(course);
+                }
+                courses = {
+                    rows: mostview_course,
+                    count: mostview_course.length
+                }
+                break;
             case "new":
             default:
                 courses = await courseRepo.getAll(limit, offset);
@@ -147,6 +160,12 @@ router.get("/:id", auth_role([]), async function (req, res) {
             refreshToken: authData.refreshToken
         };
         delete data.User;
+        console.log(authData);
+        await trackingRepo.create({
+            owner_id: authData.owner_id,
+            course_id: id,
+            type: "view"
+        })
         return res.json(response(data, 0, "success"));
     } catch (e) {
         logger.error("Get detail course error: ", e);
