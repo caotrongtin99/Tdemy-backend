@@ -2,10 +2,7 @@
   "additionalProperties": false,
   "required": [
     "name",
-    "category",
-    "description",
-    "short_description",
-    "fee"
+    "category"
   ],
   "properties": {
     "category": {
