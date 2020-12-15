@@ -3,9 +3,8 @@
   "required": [
     "name",
     "category",
-    "description",
     "short_description",
-    "fee"
+    "accessToken"
   ],
   "properties": {
     "category": {
