@@ -14,29 +14,30 @@ router.use('/:id/chapters', require("./chapter.route"));
 // Nested feedback
 router.use('/:id/feedback', require("./feedback.route"));
 // Enrollment
-router.post('/:id/enroll', auth_role([0,1]), async function (req, res) {
+router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
     const course_id = req.params.id;
     const authData = req.authData;
-    try{
+    try {
         const course = await courseRepo.getById(course_id);
-        if(course) {
+        console.log(course);
+        if (course) {
             let data = {
                 course_id: course_id,
                 user_id: authData.owner_id
             }
             let enroll = await enrollRepo.create(data);
             enroll = {
-                ...enroll,
+                ...enroll.dataValues,
                 accessToken: authData.accessToken,
                 refreshToken: authData.refreshToken
             }
             return res.json(response(enroll, 0, "success"));
-        }else{
-            return res.json(response({},404,"Course not exist to enroll"));
+        } else {
+            return res.json(response({}, 404, "Course not exist to enroll"));
         }
-    }catch (e) {
+    } catch (e) {
         logger.error("Enroll to course error ", e);
-        return res.json(response({},-1,"Enroll error"));
+        return res.json(response({}, -1, "Enroll error"));
     }
 })
 // Get All course
@@ -45,35 +46,45 @@ router.post("/", auth_role([]), async function (req, res) {
     const offset = req.query.offset;
     const type = req.body.type;
     const type_id = req.body.type_id;
+    const authData = req.authData;
+    console.log(authData);
     try {
         let data = [];
         let courses;
         switch (type) {
             case "student":
-                courses = await enrollRepo.getCourseByUserId(type_id ,limit, offset);
-                courses = [...courses]
+                courses = await enrollRepo.getCourseByUserId(type_id, limit, offset)
                 break;
             case "teacher":
                 courses = await courseRepo.getAllByOwnerId(type_id, limit, offset);
                 break;
+            case "view":
+            case "new":
             default:
                 courses = await courseRepo.getAll(limit, offset);
         }
 
-        for (const course of courses) {
+        for (const course of courses.rows) {
             const chapter_number = await chapterRepo.countByCourseId(course.id);
-            const enroll = 0;
-            const isEnroll = false;
+            const enroll = await enrollRepo.countByCourseId(course.id);
+            let isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
 
-            let course_data = {...course.dataValues, chapter_number: chapter_number, owner_name: course.User.name, enroll: enroll, isEnroll:isEnroll};
+            let course_data = { ...course.dataValues, chapter_number: chapter_number, owner_name: course.User.name, enroll: enroll, isEnroll: isEnroll };
             delete course_data.User;
             data.push(course_data);
         }
-        return res.json(response(data, 0, "success"));
+        const result = {
+            array: data,
+            type: type,
+            course_number: courses.count,
+            // accessToken: authData.accessToken,
+            // refreshToken: authData.refreshToken
+        }
+        return res.json(response(result, 0, "success"));
     } catch (e) {
-        logger.error("Get all course error: %s", e);
+        logger.error("Get all course error: ", e);
     }
-    res.json(response({},-1,"something wrong"));
+    res.json(response({}, -1, "something wrong"));
 });
 
 // Create new Course
@@ -89,7 +100,7 @@ router.post("/new", auth_role([1]), validation(register_course_schema), async fu
         };
         let result = await courseRepo.create(course);
         result = {
-            ...result,
+            ...result.dataValues,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         }
@@ -113,8 +124,8 @@ router.get("/:id", auth_role([]), async function (req, res) {
         let data = {
             ...course.dataValues,
             owner_name: course.User.name,
-            enroll:enroll,
-            isEnroll:isEnroll,
+            enroll: enroll,
+            isEnroll: isEnroll,
             chapter_number: chapter_list.count,
             chapters: chapter_list.rows,
             accessToken: authData.accessToken,
