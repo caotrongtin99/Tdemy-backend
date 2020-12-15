@@ -5,10 +5,16 @@ const wishListRepo = require("../repository/wishlist.repo");
 const logger = require("../utils/log");
 
 // Get All wishlist
-router.get("/", async function (req, res) {
+router.get("/", auth_role([0,1]), async function (req, res) {
+    const authData = req.authData;
     try {
-        // get all
-        const wishlist = await wishListRepo.getAll();
+        let wishlist = await wishListRepo.getAllByOwnerId(authData.owner_id);
+        wishlist = {
+            array: wishlist.rows,
+            count: wishlist.count,
+            accessToken: authData.accessToken,
+            refreshToken: authData.refreshToken
+        }
         res.json(response(wishlist, 0, "success"));
     } catch (e) {
         logger.error("Get all wishlist error: %s", e);

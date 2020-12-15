@@ -1,13 +1,21 @@
 const WishList = require("../models").WishList;
 
 async function getAll() {
-	const users = await WishList.findAll();
-	return users;
+	const wishLish = await WishList.findAll();
+	return wishLish;
 }
 
+async function getAllByOwnerId(user_id) {
+	const wishLish = await WishList.findAndCountAll({
+		where:{
+			user_id: user_id
+		}
+	});
+	return wishLish;
+}
 async function getById(id) {
-	const user = await WishList.findByPk(id);
-	return user;
+	const wishLish = await WishList.findByPk(id);
+	return wishLish;
 }
 
 async function create(user) {
@@ -34,6 +42,7 @@ async function remove(id) {
 }
 
 module.exports = {
+	getAllByOwnerId,
 	getAll,
 	getById,
 	create,

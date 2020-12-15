@@ -77,18 +77,18 @@ router.post("/", auth_role([]), async function (req, res) {
         }
 
         for (const course of courses.rows) {
-            const chapter_number = await chapterRepo.countByCourseId(course.id);
+            const count = await chapterRepo.countByCourseId(course.id);
             const enroll = await enrollRepo.countByCourseId(course.id);
             let isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
 
-            let course_data = { ...course.dataValues, chapter_number: chapter_number, owner_name: course.User.name, enroll: enroll, isEnroll: isEnroll };
+            let course_data = { ...course.dataValues, count: count, owner_name: course.User.name, enroll: enroll, isEnroll: isEnroll };
             delete course_data.User;
             data.push(course_data);
         }
         const result = {
             array: data,
             type: type,
-            course_number: courses.count,
+            count: courses.count,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         }
@@ -129,6 +129,9 @@ router.get("/:id", auth_role([]), async function (req, res) {
     const authData = req.authData;
     try {
         const course = await courseRepo.getById(id);
+        if(!course){
+            return res.json(response({},404,"Course not found"));
+        }
         const chapter_list = await chapterRepo.getAllByCourseId(id);
         const enroll = await enrollRepo.countByCourseId(id);
         const isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
@@ -138,7 +141,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
             owner_name: course.User.name,
             enroll: enroll,
             isEnroll: isEnroll,
-            chapter_number: chapter_list.count,
+            count: chapter_list.count,
             chapters: chapter_list.rows,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
@@ -146,7 +149,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
         delete data.User;
         return res.json(response(data, 0, "success"));
     } catch (e) {
-        logger.error("Get detail course error: %s", e);
+        logger.error("Get detail course error: ", e);
         return res.json(response({}, -1, "something wrong"));
     }
 })
