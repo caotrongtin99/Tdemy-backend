@@ -1,7 +1,6 @@
 const redisClient = require("../utils/redis");
 const logger = require("../utils/log");
 const response = require("../constants/response");
-const { role } = require("../utils/redis");
 
 let auth_role = roles => (req, res, next) => {
   const accessToken = req.headers["x-access-token"];
