@@ -3,9 +3,10 @@ const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const wishListRepo = require("../repository/wishlist.repo");
 const logger = require("../utils/log");
+const auth_role = require("../middleware/auth.mdw").auth_role;
 
 // Get All wishlist
-router.get("/", auth_role([0,1]), async function (req, res) {
+router.get("/", auth_role([0, 1]), async function (req, res) {
     const authData = req.authData;
     try {
         let wishlist = await wishListRepo.getAllByOwnerId(authData.owner_id);
@@ -23,9 +24,14 @@ router.get("/", auth_role([0,1]), async function (req, res) {
 
 // Create new wishlist
 const register_wishlist_schema = require("../schemas/register_wish_list.json");
-router.post("/", validation(register_wishlist_schema), async function (req, res) {
+router.post("/", auth_role([0, 1]), validation(register_wishlist_schema), async function (req, res) {
     const reqData = req.body;
+    const authData = req.authData;
     try {
+        const isExist = await wishListRepo.checkExist(authData.owner_id, reqData.course_id);
+        if (isExist) {
+            return res.json(response({}, 409, "You had it in wishlist before"));
+        }
         const wishlist = await wishListRepo.create(reqData);
         res.json(response(wishlist, 0, "success"));
     } catch (e) {
@@ -35,14 +41,20 @@ router.post("/", validation(register_wishlist_schema), async function (req, res)
 })
 
 // Delete wishlist
-router.delete("/:id", async function(req, res){
+router.delete("/:id", auth_role([0, 1]), async function (req, res) {
     const id = req.params.id;
-    try{
-        const result = await wishListRepo.remove(id);
-        res.json(response(result,0,"success"));
-    }catch (e) {
-        logger.error("Delete wishlist error: %s",e);
-        res.json(response({}, -1,"something wrong"));
+    const authData = req.authData;
+    try {
+        const wishlist = await wishListRepo.getWishList(authData.owner_id, reqData.course_id);
+        if (wishlist && wishlist.user_id === authData.owner_id) {
+            const result = await wishListRepo.remove(id);
+            return res.json(response(result, 0, "success"));
+        } else {
+            return res.json(response({}, 400, "You do not have permission"));
+        }
+    } catch (e) {
+        logger.error("Delete wishlist error: %s", e);
+        res.json(response({}, -1, "something wrong"));
     }
 })
 module.exports = router;
