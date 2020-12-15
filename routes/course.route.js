@@ -19,7 +19,6 @@ router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
     const authData = req.authData;
     try {
         const course = await courseRepo.getById(course_id);
-        console.log(course);
         if (course) {
             let data = {
                 course_id: course_id,
