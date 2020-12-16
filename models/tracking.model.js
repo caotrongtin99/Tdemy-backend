@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'id'
             }
         },
+        type: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        }
     }, {
         tableName: 'tracking',
         underscored: true

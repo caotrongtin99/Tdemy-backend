@@ -1,6 +1,7 @@
 const Course = require("../models").Course;
 const User = require("../models").User;
 const Chapter = require("../models").Chapter;
+const {Op} = require("sequelize");
 
 async function getAll(limit, offset) {
     return await Course.findAndCountAll({
@@ -12,6 +13,22 @@ async function getAll(limit, offset) {
         }
     });
 }
+async function getByCategory(category, limit, offset){
+    return await Course.findAndCountAll({
+        where:{
+            category: {
+                [Op.contains] : [category]
+            }
+        },
+        limit: limit,
+        offset: offset,
+        include: {
+            model: User,
+            attributes: ['name']
+        }
+    })
+}
+
 async function getCourseByStudentId(student_id, limit, offset) {
     return await Course.findAndCountAll({
         where: {
@@ -46,8 +63,7 @@ async function getById(id) {
             id: id
         },
         include: [{
-            model: User,
-            attributes: ['name']
+            model: User
         }]
     });
 }
@@ -73,6 +89,7 @@ async function remove(id) {
 }
 
 module.exports = {
+    getByCategory,
     getCourseByStudentId,
     getAllByOwnerId,
     getAll,

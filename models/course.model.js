@@ -52,6 +52,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: true,
         },
+        discount:{
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: true
+        }
     }, {
         tableName: 'course',
         underscored: true

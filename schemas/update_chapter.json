@@ -1,6 +1,9 @@
 {
   "additionalProperties": false,
   "properties": {
+    "title": {
+      "type": "string"
+    },
     "description": {
       "type": "string"
     },

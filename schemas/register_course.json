@@ -26,6 +26,9 @@
     },
     "short_description": {
       "type": "string"
+    },
+    "discount": {
+      "type": "number"
     }
   }
 }

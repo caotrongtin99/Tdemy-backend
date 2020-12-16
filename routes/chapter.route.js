@@ -29,7 +29,7 @@ router.get("/:chapter_id", auth_role([]), async function(req, res){
     try {
         let chapter = await chapterRepo.getById(chapter_id);
         chapter = {
-            ...chapter,
+            ...chapter.dataValues,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         }
@@ -52,7 +52,7 @@ router.post("/", auth_role([1]), validation(register_chapter_schema), async func
             let chapter = {...reqData, code: rand.generate(6), course_id: course_id};
             chapter = await chapterRepo.create(chapter);
             chapter = {
-                ...chapter,
+                ...chapter.dataValues,
                 accessToken: authData.accessToken,
                 refreshToken: authData.refreshToken
             }
