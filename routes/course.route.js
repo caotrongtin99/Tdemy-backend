@@ -163,10 +163,19 @@ router.get("/:id", auth_role([]), async function (req, res) {
         if(!course){
             return res.json(response({},404,"Course not found"));
         }
-        const chapter_list = await chapterRepo.getAllByCourseId(id);
+        const isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
+        let chapter_list = await chapterRepo.getAllByCourseId(id);
+        if(isEnroll === false) {
+            for(let chapter of chapter_list.rows) {
+                if(chapter.status === 1) {
+                    chapter.video_url = '';
+                    chapter.description = 'Please Enroll to view the content';
+                    chapter.duration = 0;
+                }
+            }
+        }
         const feedback_list = [];
         const enroll_count = await enrollRepo.countByCourseId(id);
-        const isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
         const feedback_count = 0;
 
         let data = {

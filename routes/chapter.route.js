@@ -47,7 +47,6 @@ router.post("/", auth_role([1]), validation(register_chapter_schema), async func
     const authData = req.authData;
     try {
         const course = await courseRepo.getById(course_id);
-        console.log(course);
         if (course && course.owner_id === authData.owner_id) {
             let chapter = {...reqData, code: rand.generate(6), course_id: course_id};
             chapter = await chapterRepo.create(chapter);
