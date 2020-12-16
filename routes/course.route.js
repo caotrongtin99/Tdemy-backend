@@ -100,6 +100,8 @@ router.post("/", auth_role([]), async function (req, res) {
                 }
                 break;
             case "new":
+                courses = await courseRepo.getLatest(limit, offset);
+                break;
             default:
                 courses = await courseRepo.getAll(limit, offset);
         }
@@ -205,6 +207,9 @@ router.put("/:id", auth_role([1]), validation(update_course_schema), async funct
     try {
         let course = await courseRepo.getById(id);
         if (course && course.owner_id === authData.owner_id) {
+            if(reqData.status !== null && reqData.status === 1){
+                reqData.publish_at = require('sequelize').fn('NOW');
+            }
             course = await courseRepo.update(id, reqData);
             course = {
                 ...course,

@@ -13,6 +13,22 @@ async function getAll(limit, offset) {
         }
     });
 }
+async function getLatest(limit, offset){
+    return await Course.findAndCountAll({
+        limit: limit,
+        offset: offset,
+        where: {
+            publish_at: {
+                [Op.ne]: null
+            }
+        },
+        order: [['publish_at', 'DESC']],
+        include: {
+            model: User,
+            attributes: ['name']
+        }
+    })
+}
 async function getByCategory(category, limit, offset){
     return await Course.findAndCountAll({
         where:{
@@ -90,6 +106,7 @@ async function remove(id) {
 
 module.exports = {
     getByCategory,
+    getLatest,
     getCourseByStudentId,
     getAllByOwnerId,
     getAll,
