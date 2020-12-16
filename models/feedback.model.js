@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         rating: {
             type: DataTypes.FLOAT,
+            defaultValue: 0,
             allowNull: false,
         },
         img_url: {

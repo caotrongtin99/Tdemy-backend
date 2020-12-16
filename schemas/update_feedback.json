@@ -5,7 +5,7 @@
       "type": "string"
     },
     "rating": {
-      "type": "string"
+      "type": "number"
     }
   }
 }
