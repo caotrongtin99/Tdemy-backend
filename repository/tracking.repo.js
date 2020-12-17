@@ -6,7 +6,7 @@ async function getAll() {
 }
 async function getMostView(limit, offset){
     return await Tracking.findAll({
-        attributes: ['course_id', [sequelize.fn('count', sequelize.col('course_id')), 'count']],
+        attributes: ['course_id', [sequelize.fn('count', sequelize.col('id')), 'count']],
         group: ['course_id'],
         order: [['count','DESC']],
         limit: limit,

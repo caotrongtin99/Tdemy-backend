@@ -49,9 +49,8 @@ router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
 router.post("/", auth_role([]), async function (req, res) {
     const limit = req.query.limit || 1000;
     const offset = req.query.offset || 0;
-    const sort = req.query.sort;
     const type = req.body.type || "";
-    const type_id = req.body.type_id;
+    const value = req.body.value || "";
     const authData = req.authData;
     try {
         let data = [];
@@ -59,7 +58,7 @@ router.post("/", auth_role([]), async function (req, res) {
         switch (type) {
             case "student":
                 let course_enroll = [];
-                const enrollList = await enrollRepo.getCourseByUserId(type_id);
+                const enrollList = await enrollRepo.getCourseByUserId(value);
                 for(const enroll of enrollList.rows){
                     const course = await courseRepo.getById(enroll.course_id);
                     course_enroll.push(course);
@@ -70,37 +69,34 @@ router.post("/", auth_role([]), async function (req, res) {
                 }
                 break;
             case "teacher":
-                courses = await courseRepo.getAllByOwnerId(type_id, limit, offset);
+                courses = await courseRepo.getAllByOwnerId(value, limit, offset);
                 break;
             case "view":
-                let mostview_course = [];
+                let most_view_course = [];
                 let courses_list = await trackingRepo.getMostView(limit, offset);
-                console.log(courses_list);
                 for(const view of courses_list){
                     const course = await courseRepo.getById(view.course_id);
-                    mostview_course.push(course);
+                    most_view_course.push(course);
                 }
                 courses = {
-                    rows: mostview_course,
-                    count: mostview_course.length
+                    rows: most_view_course,
+                    count: most_view_course.length
                 }
                 break;
             case "category":
-                let category = req.query.category;
-                category = category.split(',');
+                let category = value.split(',');
                 courses = await courseRepo.getByCategory(category, limit, offset);
                 break;
             case "enroll":
-                let mostenroll_course = [];
+                let most_enroll_course = [];
                 courses = await enrollRepo.getMostEnroll(limit, offset);
-                console.log(courses);
                 for(const enroll of courses){
                     const course = await courseRepo.getById(enroll.course_id);
-                    mostenroll_course.push(course);
+                    most_enroll_course.push(course);
                 }
                 courses = {
-                    rows: mostenroll_course,
-                    count: mostenroll_course.length
+                    rows: most_enroll_course,
+                    count: most_enroll_course.length
                 }
                 break;
             case "new":
