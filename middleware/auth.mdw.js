@@ -5,7 +5,7 @@ const response = require("../constants/response");
 let auth_role = roles => (req, res, next) => {
   const accessToken = req.headers["x-access-token"];
   const refreshToken = req.headers["x-refresh-token"];
-  if (!accessToken) {
+  if (!accessToken && roles.length > 0) {
     return res.status(400).json(response({}, 400, "Access token not valid"));
   } else {
     redisClient.hgetall(accessToken, async function (err, data) {

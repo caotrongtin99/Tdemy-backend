@@ -15,11 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         owner_id: {
             type: DataTypes.UUID,
-            allowNull: false,
-            references: {
-                model: 'user',
-                key: 'id'
-            }
+            allowNull: true,
         },
         type: {
             type: DataTypes.STRING,
