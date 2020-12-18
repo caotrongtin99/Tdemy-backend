@@ -39,8 +39,8 @@ let auth_role = roles => (req, res, next) => {
           accessToken: accessToken,
           refreshToken: refreshToken
         };
-        next();
       }
+      next();
     });
   }
 };

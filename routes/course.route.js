@@ -100,6 +100,8 @@ router.post("/", auth_role([]), async function (req, res) {
                 }
                 break;
             case "new":
+                courses = await courseRepo.getLatest(limit, offset);
+                break;
             default:
                 courses = await courseRepo.getAll(limit, offset);
         }
@@ -161,10 +163,19 @@ router.get("/:id", auth_role([]), async function (req, res) {
         if(!course){
             return res.json(response({},404,"Course not found"));
         }
-        const chapter_list = await chapterRepo.getAllByCourseId(id);
+        const isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
+        let chapter_list = await chapterRepo.getAllByCourseId(id);
+        if(isEnroll === false) {
+            for(let chapter of chapter_list.rows) {
+                if(chapter.status === 1) {
+                    chapter.video_url = '';
+                    chapter.description = 'Please Enroll to view the content';
+                    chapter.duration = 0;
+                }
+            }
+        }
         const feedback_list = [];
         const enroll_count = await enrollRepo.countByCourseId(id);
-        const isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id): false;
         const feedback_count = 0;
 
         let data = {
@@ -205,6 +216,9 @@ router.put("/:id", auth_role([1]), validation(update_course_schema), async funct
     try {
         let course = await courseRepo.getById(id);
         if (course && course.owner_id === authData.owner_id) {
+            if(reqData.status !== null && reqData.status === 1){
+                reqData.publish_at = require('sequelize').fn('NOW');
+            }
             course = await courseRepo.update(id, reqData);
             course = {
                 ...course,

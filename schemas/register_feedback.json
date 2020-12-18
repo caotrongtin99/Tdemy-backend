@@ -1,15 +1,14 @@
 {
   "additionalProperties": true,
   "required": [
-    "comment",
-    "rating"
+    "comment"
   ],
   "properties": {
     "comment": {
       "type": "string"
     },
     "rating": {
-      "type": "string"
+      "type": "number"
     }
   }
 }

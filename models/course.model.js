@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         avatar_url: {
             type: DataTypes.STRING,
+            defaultValue: 'https://images.pexels.com/photos/5905516/pexels-photo-5905516.jpeg?cs=srgb&dl=pexels-katerina-holmes-5905516.jpg&fm=jpg',
             allowNull: true,
         },
         status: {
@@ -55,6 +56,10 @@ module.exports = (sequelize, DataTypes) => {
         discount:{
             type: DataTypes.INTEGER,
             defaultValue: 0,
+            allowNull: true
+        },
+        publish_at:{
+            type: DataTypes.DATE,
             allowNull: true
         }
     }, {

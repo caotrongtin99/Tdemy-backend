@@ -27,14 +27,13 @@ async function getAllByCourseId(course_id){
 	return chapters;
 }
 async function getPreviewChapter(course_id){
-	const chapters = await Chapter.findAndCountAll({
+	return await Chapter.findAndCountAll({
 		where:{
-			course_id: course_id
+			course_id: course_id,
+			status: 1
 		},
-		order: [["code", "ASC"]],
-		limit: process.env.NUMBER_CHAPTER_PREVIEW || 1
+		order: [["updated_at", "ASC"]]
 	});
-	return chapters;
 }
 async function create(user) {
 	const res = await Chapter.create(user);
