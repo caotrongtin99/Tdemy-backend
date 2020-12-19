@@ -1,4 +1,4 @@
-const FeedBack = require("../models").FeedBack;
+const FeedBack = require("../models").Feedback;
 
 async function getAll() {
 	const users = await FeedBack.findAll();
@@ -6,7 +6,7 @@ async function getAll() {
 }
 
 async function getAllByCourseId(course_id, limit, offset){
-	return await FeedBack.findAll({
+	return await FeedBack.findAndCountAll({
 		where:{
 			course_id: course_id
 		},
@@ -28,6 +28,7 @@ async function getById(id) {
 }
 
 async function create(user) {
+	console.log("into");
 	const res = await FeedBack.create(user);
 	return res;
 }

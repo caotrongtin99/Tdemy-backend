@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Feedback = sequelize.define('Feedback',{
+    const FeedBack = sequelize.define('Feedback',{
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -43,8 +43,8 @@ module.exports = (sequelize, DataTypes) => {
         underscored: true
     });
 
-    Feedback.associate = (models) => {
-        Feedback.user = Feedback.belongsTo(
+    FeedBack.associate = (models) => {
+        FeedBack.user = FeedBack.belongsTo(
             models.User,
             {
                 foreignKey: 'id',
@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
                 hooks: true
             }
         );
-        Feedback.course = Feedback.belongsTo(
+        FeedBack.course = FeedBack.belongsTo(
             models.Course,
             {
                 foreignKey: 'id',
@@ -62,5 +62,5 @@ module.exports = (sequelize, DataTypes) => {
         );
     };
 
-    return Feedback;
+    return FeedBack;
 };

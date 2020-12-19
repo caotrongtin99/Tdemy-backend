@@ -5,6 +5,7 @@ const courseRepo = require("../repository/course.repo");
 const chapterRepo = require("../repository/chapter.repo");
 const enrollRepo = require("../repository/enroll.repo");
 const trackingRepo = require("../repository/tracking.repo");
+const feedbackRepo = require("../repository/feedback.repo");
 const userRepo = require("../repository/user.repo");
 const logger = require("../utils/log");
 const rand = require("rand-token");
@@ -174,9 +175,8 @@ router.get("/:id", auth_role([]), async function (req, res) {
                 }
             }
         }
-        const feedback_list = [];
+        const feedback = await feedbackRepo.getAllByCourseId(id);
         const enroll_count = await enrollRepo.countByCourseId(id);
-        const feedback_count = 0;
 
         let data = {
             ...course.dataValues,
@@ -185,8 +185,8 @@ router.get("/:id", auth_role([]), async function (req, res) {
             isEnroll: isEnroll,
             chapter_count: chapter_list.count,
             chapters: chapter_list.rows,
-            feedback: feedback_list,
-            feedback_count: feedback_count,
+            feedback: feedback.rows,
+            feedback_count: feedback.count,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         };
@@ -254,7 +254,7 @@ router.delete("/:id", auth_role([1, 2]), async function (req, res) {
             return res.json(response({}, 400, "You do not have "))
         }
     } catch (e) {
-        logger.error("Delete course error: %s", e);
+        logger.error("Delete course error: ", e);
         return res.json(response({}, -1, "something wrong"));
     }
 })
