@@ -38,7 +38,10 @@ router.post("/", validation(register_schema), async function (req, res) {
       return res.json(response(result, 0, "success"));
     } else {
       const confirm_code = "uc" + randToken.generate(80);
-      const cacheCode = redisClient.hmset(confirm_code, user);
+      const cacheCode = redisClient.hmset(confirm_code, {
+        ...user,
+        type: "register",
+      });
       const expireTime = redisClient.expire(
         confirm_code,
         process.env.CONFIRM_EXP || 86400
@@ -57,8 +60,6 @@ router.post("/", validation(register_schema), async function (req, res) {
     res.json(response({}, -1, "something wrong"));
   }
 });
-
-
 
 // Get detail
 router.get("/:id", async function (req, res) {
