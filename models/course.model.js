@@ -101,6 +101,15 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: 'cascade',
                 hooks: true
             }
+        );
+        Course.wishList = Course.hasMany(
+            models.WishList,
+            {
+                as: 'wishList',
+                foreignKey: 'course_id',
+                onDelete: 'cascade',
+                hooks: true
+            }
         )
     };
 

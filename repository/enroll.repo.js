@@ -53,7 +53,10 @@ async function getCourseByUserId(user_id, limit, offset){
             user_id: user_id
         },
         limit: limit,
-        offset: offset
+        offset: offset,
+        include: {
+            model: Course
+        }
     });
     return res;
 }
