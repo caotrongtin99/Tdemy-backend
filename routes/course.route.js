@@ -177,7 +177,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
         }
         const feedback = await feedbackRepo.getAllByCourseId(id);
         const enroll_count = await enrollRepo.countByCourseId(id);
-
+        
         let data = {
             ...course.dataValues,
             owner_name: course.User.name,
@@ -191,8 +191,6 @@ router.get("/:id", auth_role([]), async function (req, res) {
             refreshToken: authData.refreshToken
         };
         let user = {...data.User.dataValues};
-        delete user.password;
-        delete user.ref_token;
         delete data.User;
         data = {...data, teacher: user};
         await trackingRepo.create({

@@ -44,22 +44,16 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     FeedBack.associate = (models) => {
-        FeedBack.user = FeedBack.belongsTo(
-            models.User,
-            {
-                foreignKey: 'id',
-                onDelete: 'cascade',
-                hooks: true
-            }
-        );
-        FeedBack.course = FeedBack.belongsTo(
-            models.Course,
-            {
-                foreignKey: 'id',
-                onDelete: 'cascade',
-                hooks: true
-            }
-        );
+        FeedBack.user = FeedBack.belongsTo(models.User, {
+          foreignKey: "owner_id",
+          onDelete: "cascade",
+          hooks: true,
+        });
+        FeedBack.course = FeedBack.belongsTo(models.Course, {
+          foreignKey: "course_id",
+          onDelete: "cascade",
+          hooks: true,
+        });
     };
 
     return FeedBack;
