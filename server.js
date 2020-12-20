@@ -21,6 +21,7 @@ app.use("/api/users", require("./routes/user.route"));
 app.use("/api/courses", require("./routes/course.route"));
 app.use("/api/wishlist", require("./routes/wishList.route"));
 app.use("/api/enroll", require("./routes/enroll.route"));
+app.use("/api/search", require("./routes/search.route"));
 // app.use("/api/state", require("./routes/video_state.route"));
 
 app.use(function (req, res, next) {

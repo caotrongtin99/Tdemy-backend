@@ -32,28 +32,24 @@ async function getById(id) {
   return user;
 }
 
-async function create(user) {
-  console.log("into");
-  const res = await FeedBack.create(user);
-  return res;
+async function create(feedback) {
+  return await FeedBack.create(feedback);
 }
 
-async function update(id, user) {
-  const res = await FeedBack.update(user, {
+async function update(id, feedback) {
+  return await FeedBack.update(feedback, {
     where: {
       id: id,
     },
   });
-  return res;
 }
 
 async function remove(id) {
-  const res = await FeedBack.destroy({
+  return await FeedBack.destroy({
     where: {
       id: id,
     },
   });
-  return res;
 }
 
 module.exports = {
