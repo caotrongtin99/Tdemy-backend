@@ -1,45 +1,122 @@
 const Course = require("../models").Course;
+const User = require("../models").User;
+const Chapter = require("../models").Chapter;
+const { Op } = require("sequelize");
 
 async function getAll(limit, offset) {
-	const courses = await Course.findAll({
-		limit: limit,
-		offset: offset
-	});
-	return courses;
+  return await Course.findAndCountAll({
+    limit: limit,
+    offset: offset,
+    include: {
+      model: User,
+      attributes: ["name"],
+    },
+  });
+}
+async function getLatest(limit, offset) {
+  return await Course.findAndCountAll({
+    limit: limit,
+    offset: offset,
+    where: {
+      publish_at: {
+        [Op.ne]: null,
+      },
+    },
+    order: [["publish_at", "DESC"]],
+    include: {
+      model: User,
+      attributes: ["name"],
+    },
+  });
+}
+async function getByCategory(category, limit, offset) {
+  return await Course.findAndCountAll({
+    where: {
+      category: {
+        [Op.contains]: [category],
+      },
+    },
+    limit: limit,
+    offset: offset,
+    include: {
+      model: User,
+      attributes: ["name"],
+    },
+  });
+}
+
+async function getCourseByStudentId(student_id, limit, offset) {
+  return await Course.findAndCountAll({
+    where: {
+      owner_id: student_id,
+    },
+    limit: limit,
+    offset: offset,
+    include: {
+      model: User,
+      attributes: ["name"],
+    },
+  });
+}
+
+async function getAllByOwnerId(teacher_id, limit, offset) {
+  return await Course.findAndCountAll({
+    where: {
+      owner_id: teacher_id,
+    },
+    limit: limit,
+    offset: offset,
+    include: {
+      model: User,
+      attributes: ["name"],
+    },
+  });
 }
 
 async function getById(id) {
-	const course = await Course.findByPk(id);
-	return course;
+  return await Course.findOne({
+    where: {
+      id: id,
+    },
+    include: [
+      {
+        model: User,
+        attributes: {
+          exclude: ["password", "ref_token"],
+        },
+      },
+    ],
+  });
 }
 
 async function create(course) {
-	const res = await Course.create(course);
-	return res;
+  return Course.create(course);
 }
 
 async function update(id, course) {
-	const res = await Course.update(course, {
-			where: {
-				id: id
-			}
-		});
-	return res;
+  return await Course.update(course, {
+    where: {
+      id: id,
+    },
+  });
 }
 
 async function remove(id) {
-	const res = await Course.destroy({
-		where: {
-			id: id
-		}
-	});
-	return res;
+  return await Course.destroy({
+    where: {
+      id: id,
+    },
+  });
 }
 
 module.exports = {
-	getAll,
-	getById,
-	create,
-	update,
-	remove,
+  getByCategory,
+  getLatest,
+  getCourseByStudentId,
+  getAllByOwnerId,
+  getAll,
+  getById,
+  create,
+  update,
+  remove,
 };

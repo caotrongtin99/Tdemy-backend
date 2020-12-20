@@ -1,0 +1,11 @@
+{
+    "additionalProperties": false,
+    "required": [
+        "email"
+    ],
+    "properties": {
+        "email": {
+            "type": "string"
+        }
+    }
+}

@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             avatar_url: {
                 type: DataTypes.STRING,
+                defaultValue: 'https://images.pexels.com/photos/5905516/pexels-photo-5905516.jpeg?cs=srgb&dl=pexels-katerina-holmes-5905516.jpg&fm=jpg',
                 allowNull: true,
             },
             status: {
@@ -67,8 +68,17 @@ module.exports = (sequelize, DataTypes) => {
         User.course = User.hasMany(
             models.Course,
             {
-                as: 'course',
+                as: 'courses',
                 foreignKey: 'owner_id',
+                onDelete: 'cascade',
+                hooks: true
+            }
+        );
+        User.enroll = User.hasMany(
+            models.Enroll,
+            {
+                as: 'enrolls',
+                foreignKey: 'user_id',
                 onDelete: 'cascade',
                 hooks: true
             }

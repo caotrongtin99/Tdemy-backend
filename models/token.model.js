@@ -17,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
         Token.user = Token.belongsTo(
             models.User,
             {
-                as: 'user',
                 foreignKey: 'email',
                 onDelete: 'cascade',
                 hooks: true

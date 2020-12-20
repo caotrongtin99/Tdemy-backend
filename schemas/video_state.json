@@ -1,0 +1,19 @@
+{
+    "additionalProperties": false,
+    "required": [
+        "video_url",
+        "cur_pos",
+        "chapter_id"
+    ],
+    "properties": {
+      "chapter_id": {
+        "type": "string"
+      },
+      "cur_pos": {
+        "type": "number"
+      },
+      "video_url": {
+        "type": "string"
+      }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "additionalProperties": false,
+    "required": [
+        "course_id"
+    ],
+    "properties": {
+        "course_id": {
+            "type": "array"
+       }
+    }
+}

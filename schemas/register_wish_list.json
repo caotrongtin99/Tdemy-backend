@@ -1,14 +1,10 @@
 {
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": [
-    "accessToken",
-    "password"
+    "course_id"
   ],
   "properties": {
-    "email": {
-      "type": "string"
-    },
-    "password": {
+    "course_id": {
       "type": "string"
     }
   }

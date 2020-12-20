@@ -1,9 +1,9 @@
 {
   "additionalProperties": false,
-  "required": [
-    "accessToken"
-  ],
   "properties": {
+    "title": {
+      "type": "string"
+    },
     "description": {
       "type": "string"
     },
@@ -15,9 +15,6 @@
     },
     "status": {
       "type": "integer"
-    },
-    "accessToken": {
-      "type": "string"
     }
   }
 }

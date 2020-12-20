@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        title:{
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         course_id: {
             type: DataTypes.UUID,
             allowNull: false,
@@ -33,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         status: {
             type: DataTypes.INTEGER,
+            defaultValue: 1,
             allowNull: false,
         },
     }, {
@@ -44,7 +49,6 @@ module.exports = (sequelize, DataTypes) => {
         Chapter.course = Chapter.belongsTo(
             models.Course,
             {
-                as: 'course',
                 foreignKey: 'id'
             }
         );

@@ -27,8 +27,7 @@ module.exports = (message) => {
     if (error) {
       console.log("[MAIL][ERROR] "+ error.message);
     }else{
-    console.log("[MAIL][SUCCESS] Message sent successfully!");
-    console.log(nodemailer.getTestMessageUrl(info));
+    console.log("[MAIL][SUCCESS] Message sent successfully!: ", info);
     }
     // // only needed when using pooled connections
     // transporter.close();

@@ -1,6 +1,9 @@
 {
-  "additionalProperties": true,
+  "additionalProperties": false,
   "properties": {
+    "category": {
+      "type": "array"
+    },
     "name": {
       "type": "string"
     },
@@ -11,10 +14,16 @@
       "type": "string"
     },
     "fee": {
-      "type": "float"
+      "type": "number"
     },
     "status": {
       "type": "integer"
+    },
+    "short_description": {
+      "type": "string"
+    },
+    "discount": {
+      "type": "number"
     }
   }
 }

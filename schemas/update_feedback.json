@@ -1,15 +1,11 @@
 {
-  "additionalProperties": true,
-  "required": [
-    "accessToken",
-    "password"
-  ],
+  "additionalProperties": false,
   "properties": {
-    "email": {
+    "comment": {
       "type": "string"
     },
-    "password": {
-      "type": "string"
+    "rating": {
+      "type": "number"
     }
   }
 }

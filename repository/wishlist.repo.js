@@ -1,39 +1,54 @@
 const WishList = require("../models").WishList;
 
 async function getAll() {
-	const users = await WishList.findAll();
-	return users;
+	return await WishList.findAll();
 }
-
+async function checkExist(user_id, course_id){
+	return await getWishList(user_id, course_id) !== null;
+}
+async function getWishList(user_id, course_id){
+	return await WishList.findOne({
+		where:{
+			user_id: user_id,
+			course_id: course_id
+		}
+	})
+}
+async function getAllByOwnerId(user_id) {
+	return await WishList.findAndCountAll({
+		where:{
+			user_id: user_id
+		}
+	});
+}
 async function getById(id) {
-	const user = await WishList.findByPk(id);
-	return user;
+	return await WishList.findByPk(id);
 }
 
-async function create(user) {
-	const res = await WishList.create(user);
-	return res;
+async function create(wishlist) {
+	return await WishList.create(wishlist);
 }
 
-async function update(id, user) {
-	const res = await WishList.update(user, {
-			where: {
-				id: id
-			}
-		});
-	return res;
+async function update(id, wishlist) {
+  return await WishList.update(wishlist, {
+    where: {
+      id: id,
+    },
+  });
 }
 
 async function remove(id) {
-	const res = await WishList.destroy({
+	return await WishList.destroy({
 		where: {
 			id: id
 		}
 	});
-	return res;
 }
 
 module.exports = {
+	getWishList,
+	checkExist,
+	getAllByOwnerId,
 	getAll,
 	getById,
 	create,

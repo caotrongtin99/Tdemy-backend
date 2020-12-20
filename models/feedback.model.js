@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Feedback = sequelize.define('Feedback',{
+    const FeedBack = sequelize.define('Feedback',{
         id: {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4,
@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         rating: {
             type: DataTypes.FLOAT,
+            defaultValue: 0,
             allowNull: false,
         },
         img_url: {
@@ -42,24 +43,18 @@ module.exports = (sequelize, DataTypes) => {
         underscored: true
     });
 
-    Feedback.associate = (models) => {
-        Feedback.user = Feedback.belongsTo(
-            models.User,
-            {
-                as: 'user',
-                foreignKey: 'id'
-            }
-        );
-        Feedback.course = Feedback.belongsTo(
-            models.Course,
-            {
-                as: 'course',
-                foreignKey: 'id',
-                onDelete: 'cascade',
-                hooks: true
-            }
-        );
+    FeedBack.associate = (models) => {
+        FeedBack.user = FeedBack.belongsTo(models.User, {
+          foreignKey: "owner_id",
+          onDelete: "cascade",
+          hooks: true,
+        });
+        FeedBack.course = FeedBack.belongsTo(models.Course, {
+          foreignKey: "course_id",
+          onDelete: "cascade",
+          hooks: true,
+        });
     };
 
-    return Feedback;
+    return FeedBack;
 };

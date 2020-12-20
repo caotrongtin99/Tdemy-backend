@@ -1,12 +1,13 @@
 {
   "additionalProperties": false,
   "required": [
-    "accessToken",
     "name",
-    "description",
-    "fee"
+    "category"
   ],
   "properties": {
+    "category": {
+      "type": "array"
+    },
     "name": {
       "type": "string"
     },
@@ -22,8 +23,11 @@
     "status": {
       "type": "integer"
     },
-    "accessToken": {
+    "short_description": {
       "type": "string"
+    },
+    "discount": {
+      "type": "number"
     }
   }
 }

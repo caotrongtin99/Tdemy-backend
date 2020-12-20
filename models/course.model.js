@@ -19,12 +19,21 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: 'cascade',
             onDelete: 'cascade'
         },
+        category: {
+            type: DataTypes.ARRAY(DataTypes.STRING),
+            allowNull: true
+        },
         name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        short_description: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         avatar_url: {
             type: DataTypes.STRING,
+            defaultValue: 'https://images.pexels.com/photos/5905516/pexels-photo-5905516.jpeg?cs=srgb&dl=pexels-katerina-holmes-5905516.jpg&fm=jpg',
             allowNull: true,
         },
         status: {
@@ -44,6 +53,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.FLOAT,
             allowNull: true,
         },
+        discount:{
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: true
+        },
+        publish_at:{
+            type: DataTypes.DATE,
+            allowNull: true
+        }
     }, {
         tableName: 'course',
         underscored: true
@@ -53,7 +71,6 @@ module.exports = (sequelize, DataTypes) => {
         Course.teacher = Course.belongsTo(
             models.User,
             {
-                as: 'teacher',
                 foreignKey: 'owner_id'
             }
         );
@@ -66,7 +83,7 @@ module.exports = (sequelize, DataTypes) => {
                 hooks: true
             }
         );
-    
+
         Course.feedbacks = Course.hasMany(
             models.Feedback,
             {
@@ -76,6 +93,24 @@ module.exports = (sequelize, DataTypes) => {
                 hooks: true
             }
         );
+        Course.enroll = Course.hasMany(
+            models.Enroll,
+            {
+                as: 'enrolls',
+                foreignKey: 'course_id',
+                onDelete: 'cascade',
+                hooks: true
+            }
+        );
+        Course.wishList = Course.hasMany(
+            models.WishList,
+            {
+                as: 'wishList',
+                foreignKey: 'course_id',
+                onDelete: 'cascade',
+                hooks: true
+            }
+        )
     };
 
     return Course;

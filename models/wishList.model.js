@@ -21,15 +21,15 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade'
         },
     },{
-        tableName: 'wishLish',
+        tableName: 'wishList',
         underscored: true
     });
+    WishList.removeAttribute("id");
     WishList.associate = (models) => {
-        WishList.courses = WishList.hasMany(
+        WishList.courses = WishList.belongsTo(
             models.Course,
             {
-                as: 'course',
-                foreignKey: 'id',
+                foreignKey: 'course_id',
                 onDelete: 'cascade',
                 hooks: true
             }
@@ -37,8 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         WishList.user = WishList.belongsTo(
             models.User,
             {
-                as: 'user',
-                foreignKey: 'id',
+                foreignKey: 'user_id',
                 onDelete: 'cascade',
                 hooks: true
             }
