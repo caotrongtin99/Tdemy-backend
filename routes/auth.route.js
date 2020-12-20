@@ -141,6 +141,46 @@ router.post("/", validation(login_schema), async function (req, res) {
     res.json(response(userFind, 0, "success"));
 })
 
+// Confirm register
+router.all("/confirm", async function (req, res) {
+  const confirm_code = req.query.code;
+  if (confirm_code) {
+    // Check confirm code in redis
+    redisClient.hgetall(confirm_code, async function (err, data) {
+      // confirm code not exists
+      if (err || data === null) {
+        logger.info("Confirm code %s not exist in redis!", confirm_code);
+        return res.status(400).json(response({}, -1, "Confirm code not exits"));
+      } else {
+        logger.info("Confirm code data: %s", data);
+        if (redisClient.del(confirm_code)) {
+          let result = await userRepo.create(data);
+          logger.info("Confirm and create user success");
+          result = { ...result.dataValues };
+          delete result.password;
+          return res.status(201).json(response(result, 0, "Confirm success"));
+        } else {
+          logger.error("Remove confirm code redis fail");
+          return res.status(500).json(response({}, -1, "something wrong"));
+        }
+      }
+    });
+  } else {
+    logger.error("Confirm fail");
+    res.json(response({}, -1, "confirm not valid"));
+  }
+});
+
+// Forgot password -> send mail
+router.post("/forgot", async function(req,res){
+
+})
+
+// Renew Password
+router.post("/renew", async function(req, res){
+
+})
+
 let update_accessToken_redis = (accessToken, data) => {
     let isSet = redisClient.hmset(accessToken, data);
     let isSetExpire = redisClient.expire(accessToken, process.env.ACCESS_TOKEN_EXPIRE || 60);
