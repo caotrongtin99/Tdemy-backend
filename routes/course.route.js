@@ -15,37 +15,7 @@ const auth_role = require("../middleware/auth.mdw").auth_role;
 router.use('/:id/chapters', require("./chapter.route"));
 // Nested feedback
 router.use('/:id/feedback', require("./feedback.route"));
-// Enrollment
-router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
-    const course_id = req.params.id;
-    const authData = req.authData;
-    try {
-        const course = await courseRepo.getById(course_id);
-        if (course) {
-            const isEnroll = await enrollRepo.checkEnroll(authData.owner_id, course_id);
-            if(isEnroll){
-                logger.info("Enroll exist");
-                return res.json(response({}, -2, "You had enroll before"));
-            }
-            let data = {
-                course_id: course_id,
-                user_id: authData.owner_id
-            }
-            let enroll = await enrollRepo.create(data);
-            enroll = {
-                ...enroll.dataValues,
-                accessToken: authData.accessToken,
-                refreshToken: authData.refreshToken
-            }
-            return res.json(response(enroll, 0, "success"));
-        } else {
-            return res.json(response({}, 404, "Course not exist to enroll"));
-        }
-    } catch (e) {
-        logger.error("Enroll to course error ", e);
-        return res.json(response({}, -1, "Enroll error"));
-    }
-})
+
 // Get All course
 router.post("/", auth_role([]), async function (req, res) {
     const limit = req.query.limit || 1000;
