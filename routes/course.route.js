@@ -96,14 +96,14 @@ router.post("/", auth_role([]), async function (req, res) {
         }
         return res.json(response(result, 0, "success"));
     } catch (e) {
-        logger.error("Get all course error: ", e);
+        logger.error(`Get all course error: ${e}`);
     }
     res.json(response({}, -1, "something wrong"));
 });
 
 // Create new Course
 const register_course_schema = require("../schemas/register_course.json");
-router.post("/new", auth_role([1]), validation(register_course_schema), async function (req, res) {
+router.post("/new", auth_role([1,2]), validation(register_course_schema), async function (req, res) {
     const reqData = req.body;
     const authData = req.authData;
     try {
@@ -120,7 +120,7 @@ router.post("/new", auth_role([1]), validation(register_course_schema), async fu
         }
         return res.json(response(result, 0, "success"));
     } catch (e) {
-        logger.error("Create new Course error: ", e);
+        logger.error(`Create new Course error: ${e}`);
         return res.json(response({}, -1, "something wrong"));
     }
 })

@@ -15,7 +15,7 @@ router.get("/", auth_role([]), async function (req, res) {
         const chapter = await chapterRepo.getAllByCourseId(course_id);
         res.json(response(chapter, 0, "success"));
     } catch (e) {
-        logger.error("Get all chapter error: %s", e);
+        logger.error(`Get all chapter error: ${e}`);
         return res.json(response({},-1,"something wrong"));
     }
 });
@@ -35,7 +35,7 @@ router.get("/:chapter_id", auth_role([]), async function(req, res){
         }
         res.json(response(chapter, 0, "success"));
     } catch (e) {
-        logger.error("Get all chapter error: %s", e);
+        logger.error(`Get all chapter error: ${e}`);
         return res.json(response({},-1,"something wrong"));
     }
 })
@@ -61,7 +61,7 @@ router.post("/", auth_role([1]), validation(register_chapter_schema), async func
             res.json(response({}, 400, "You do not have permission"));
         }
     } catch (e) {
-        logger.error("Create new chapter error: ", e);
+        logger.error(`Create new chapter error: ${e}`);
         return res.json(response({},-1,"something wrong"));
     }
 })
@@ -89,7 +89,7 @@ router.put("/:chapter_id", auth_role([1]), validation(update_chapter_schema), as
             return res.json(response({}, 400, "You not have permission"));
         }
     } catch (e) {
-        logger.error("Update chapter error: %s", e);
+        logger.error(`Update chapter error: ${e}`);
         return res.json(response({},-1,"something wrong"));
     }
 })
@@ -114,7 +114,7 @@ router.delete("/:chapter_id", auth_role([1]), async function (req, res) {
             res.json(response({}, 400, "You do not have permission"));
         }
     } catch (e) {
-        logger.error("Delete chapter error: %s", e);
+        logger.error(`Delete chapter error: ${e}`);
         return res.json(response({},-1,"something wrong"));
     }
 })

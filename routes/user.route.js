@@ -8,7 +8,6 @@ const logger = require("../utils/log");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const redisClient = require("../utils/redis");
 const sendMail = require("../utils/mailer");
-const mailModel = require("../utils/mail.model").register_message;
 
 // Get list user
 router.get("/", auth_role([2]), async function (req, res) {
@@ -48,7 +47,7 @@ router.post("/", validation(register_schema), async function (req, res) {
       );
       if (cacheCode && expireTime) {
         logger.info("Create confirm code");
-        sendMail(mailModel(user.email, confirm_code));
+        sendMail(register_mail(user.email, confirm_code));
         return res.json(
           response({}, 0, "Please check your mail and confirm register")
         );
@@ -56,7 +55,7 @@ router.post("/", validation(register_schema), async function (req, res) {
       throw "Save confirm redis fail";
     }
   } catch (e) {
-    logger.error("Register error: ", e);
+    logger.error(`Register error: ${e}`);
     res.json(response({}, -1, "something wrong"));
   }
 });
@@ -68,7 +67,7 @@ router.get("/:id", async function (req, res) {
     const result = await userRepo.getById(id);
     res.json(response(result, 0, "success"));
   } catch (e) {
-    logger.error("Get user detail error", e);
+    logger.error(`Get user detail error: ${e}`);
     res.json(response({}, -1, "something wrong"));
   }
 });
@@ -96,7 +95,7 @@ router.put(
         return res.json(response({}, 400, "You do not have permission"));
       }
     } catch (e) {
-      logger.error("Update user error: %s", e);
+      logger.error(`Update user error: ${e}`);
       return res.json(response({}, -1, "something wrong"));
     }
   }
@@ -118,7 +117,7 @@ router.delete("/:id", auth_role([0, 1, 2]), async function (req, res) {
     }
     throw "error";
   } catch (e) {
-    logger.error("Delete user error: %s", e);
+    logger.error(`Delete user error: ${e}`);
     res.json(response({}, -1, "something wrong"));
   }
 });
