@@ -28,7 +28,7 @@ router.get("/", auth_role([]), async function (req, res) {
 
 // Create new feedback
 const register_feedback_schema = require("../schemas/register_feedback.json");
-router.post("/", auth_role([0,1]),validation(register_feedback_schema), async function (req, res) {
+router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), async function (req, res) {
     const reqData = req.body;
     const course_id = req.params.id;
     const authData = req.authData;
@@ -57,7 +57,7 @@ router.post("/", auth_role([0,1]),validation(register_feedback_schema), async fu
 
 // Update feedback
 const update_feedback_schema = require("../schemas/update_feedback.json");
-router.put("/:feedback_id", auth_role([0,1]), validation(update_feedback_schema), async function(req, res){
+router.put("/:feedback_id", auth_role([0, 1, 2]), validation(update_feedback_schema), async function(req, res){
     const course_id = req.params.id;
     const feedback_id = req.params.feedback_id;
     const reqData = req.body;
@@ -84,7 +84,7 @@ router.put("/:feedback_id", auth_role([0,1]), validation(update_feedback_schema)
 })
 
 // Delete feedback
-router.delete("/:feedback_id", auth_role([0,1,2]), async function(req, res){
+router.delete("/:feedback_id", auth_role([0, 1, 2]), async function(req, res){
     const course_id = req.params.id;
     const feedback_id = req.params.feedback_id;
     const authData = req.authData;

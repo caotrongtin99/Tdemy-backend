@@ -6,7 +6,7 @@ const logger = require("../utils/log");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 
 // Get All wishlist
-router.get("/", auth_role([0, 1]), async function (req, res) {
+router.get("/", auth_role([0, 1, 2]), async function (req, res) {
   const authData = req.authData;
   try {
     let wishlist = await wishListRepo.getAllByOwnerId(authData.owner_id);

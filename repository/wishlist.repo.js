@@ -1,5 +1,5 @@
 const WishList = require("../models").WishList;
-
+const Course = require("../models").Course;
 async function getAll() {
 	return await WishList.findAll();
 }
@@ -11,6 +11,9 @@ async function getWishList(user_id, course_id){
 		where:{
 			user_id: user_id,
 			course_id: course_id
+		},
+		include:{
+			model: Course
 		}
 	})
 }
@@ -18,6 +21,9 @@ async function getAllByOwnerId(user_id) {
 	return await WishList.findAndCountAll({
 		where:{
 			user_id: user_id
+		},
+		include:{
+			model: Course
 		}
 	});
 }
@@ -37,10 +43,11 @@ async function update(id, wishlist) {
   });
 }
 
-async function remove(id) {
+async function remove(user_id, course_id) {
 	return await WishList.destroy({
 		where: {
-			id: id
+			user_id: user_id,
+			course_id: course_id
 		}
 	});
 }

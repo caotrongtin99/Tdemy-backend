@@ -2,7 +2,7 @@ const User = require("../models").User;
 const bcrypt = require("bcryptjs");
 
 async function getAll() {
-  return await User.findAll();
+  return await User.findAndCountAll();
 }
 async function isEmailExist(email) {
   const count = await User.count({

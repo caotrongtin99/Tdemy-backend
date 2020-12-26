@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const WishList = sequelize.define('WishList', {
         user_id: {
             type: DataTypes.UUID,
+            primaryKey: true,
             allowNull: false,
             references: {
               model: 'user',
@@ -12,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         course_id: {
             type: DataTypes.UUID,
+            primaryKey: true,
             allowNull: false,
             references: {
               model: 'course',

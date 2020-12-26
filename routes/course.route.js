@@ -103,7 +103,7 @@ router.post("/", auth_role([]), async function (req, res) {
 
 // Create new Course
 const register_course_schema = require("../schemas/register_course.json");
-router.post("/new", auth_role([1,2]), validation(register_course_schema), async function (req, res) {
+router.post("/new", auth_role([1, 2]), validation(register_course_schema), async function (req, res) {
     const reqData = req.body;
     const authData = req.authData;
     try {
@@ -177,7 +177,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
 
 // Update course
 const update_course_schema = require("../schemas/update_course.json");
-router.put("/:id", auth_role([1]), validation(update_course_schema), async function (req, res) {
+router.put("/:id", auth_role([1, 2]), validation(update_course_schema), async function (req, res) {
     const reqData = req.body;
     const id = req.params.id;
     const authData = req.authData;

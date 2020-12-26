@@ -12,8 +12,16 @@ const sendMail = require("../utils/mailer");
 // Get list user
 router.get("/", auth_role([2]), async function (req, res) {
   try {
-    const user = await userRepo.getAll();
-    res.json(response(user, 0, "success"));
+    const users = await userRepo.getAll();
+    let list_user = [];
+    for(const user of users.rows){
+      let data = {
+        ...user.dataValues
+      };
+      delete data.password;
+      list_user.push(data);
+    }
+    res.json(response({count: users.count, rows: list_user}, 0, "success"));
   } catch (e) {
     logger.error("Get Users error: %s", e);
     res.json(response({}, -1, "something wrong"));

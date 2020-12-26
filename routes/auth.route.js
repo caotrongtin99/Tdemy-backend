@@ -10,6 +10,7 @@ const response = require("../constants/response");
 const mailModel = require("../utils/mail.model");
 const login_schema = require("../schemas/register.json");
 const sendMail = require("../utils/mailer");
+
 router.post("/", validation(login_schema), async function (req, res) {
   const reqData = req.body;
   let userFind = await userRepo.getByEmail(reqData.email);
