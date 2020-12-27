@@ -26,7 +26,7 @@ router.get("/", auth_role([0, 1, 2]), async function (req, res) {
 const register_wishlist_schema = require("../schemas/register_wish_list.json");
 router.post(
   "/",
-  auth_role([0, 1]),
+  auth_role([0, 1, 2]),
   validation(register_wishlist_schema),
   async function (req, res) {
     const reqData = req.body;
