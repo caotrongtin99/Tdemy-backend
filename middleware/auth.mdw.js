@@ -15,7 +15,6 @@ let auth_role = roles => (req, res, next) => {
         return res.status(400).json(response({}, 400, "Access token not valid"));
       }
       if ((err || data === null) && roles.length === 0) {
-        console.log("not require");
         req.authData = {
           owner_id: null,
           email: null,

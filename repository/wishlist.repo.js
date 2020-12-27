@@ -1,55 +1,55 @@
 const WishList = require("../models").WishList;
-
+const Course = require("../models").Course;
 async function getAll() {
-	const wishLish = await WishList.findAll();
-	return wishLish;
+	return await WishList.findAll();
 }
 async function checkExist(user_id, course_id){
 	return await getWishList(user_id, course_id) !== null;
 }
 async function getWishList(user_id, course_id){
-	const wishlist = await WishList.findOne({
+	return await WishList.findOne({
 		where:{
 			user_id: user_id,
 			course_id: course_id
+		},
+		include:{
+			model: Course
 		}
 	})
-	return wishlist;
 }
 async function getAllByOwnerId(user_id) {
-	const wishLish = await WishList.findAndCountAll({
+	return await WishList.findAndCountAll({
 		where:{
 			user_id: user_id
+		},
+		include:{
+			model: Course
 		}
 	});
-	return wishLish;
 }
 async function getById(id) {
-	const wishLish = await WishList.findByPk(id);
-	return wishLish;
+	return await WishList.findByPk(id);
 }
 
-async function create(user) {
-	const res = await WishList.create(user);
-	return res;
+async function create(wishlist) {
+	return await WishList.create(wishlist);
 }
 
-async function update(id, user) {
-	const res = await WishList.update(user, {
-			where: {
-				id: id
-			}
-		});
-	return res;
+async function update(id, wishlist) {
+  return await WishList.update(wishlist, {
+    where: {
+      id: id,
+    },
+  });
 }
 
-async function remove(id) {
-	const res = await WishList.destroy({
+async function remove(user_id, course_id) {
+	return await WishList.destroy({
 		where: {
-			id: id
+			user_id: user_id,
+			course_id: course_id
 		}
 	});
-	return res;
 }
 
 module.exports = {

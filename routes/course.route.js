@@ -5,6 +5,7 @@ const courseRepo = require("../repository/course.repo");
 const chapterRepo = require("../repository/chapter.repo");
 const enrollRepo = require("../repository/enroll.repo");
 const trackingRepo = require("../repository/tracking.repo");
+const feedbackRepo = require("../repository/feedback.repo");
 const userRepo = require("../repository/user.repo");
 const logger = require("../utils/log");
 const rand = require("rand-token");
@@ -14,37 +15,7 @@ const auth_role = require("../middleware/auth.mdw").auth_role;
 router.use('/:id/chapters', require("./chapter.route"));
 // Nested feedback
 router.use('/:id/feedback', require("./feedback.route"));
-// Enrollment
-router.post('/:id/enroll', auth_role([0, 1]), async function (req, res) {
-    const course_id = req.params.id;
-    const authData = req.authData;
-    try {
-        const course = await courseRepo.getById(course_id);
-        if (course) {
-            const isEnroll = await enrollRepo.checkEnroll(authData.owner_id, course_id);
-            if(isEnroll){
-                logger.info("Enroll exist");
-                return res.json(response({}, -2, "You had enroll before"));
-            }
-            let data = {
-                course_id: course_id,
-                user_id: authData.owner_id
-            }
-            let enroll = await enrollRepo.create(data);
-            enroll = {
-                ...enroll.dataValues,
-                accessToken: authData.accessToken,
-                refreshToken: authData.refreshToken
-            }
-            return res.json(response(enroll, 0, "success"));
-        } else {
-            return res.json(response({}, 404, "Course not exist to enroll"));
-        }
-    } catch (e) {
-        logger.error("Enroll to course error ", e);
-        return res.json(response({}, -1, "Enroll error"));
-    }
-})
+
 // Get All course
 router.post("/", auth_role([]), async function (req, res) {
     const limit = req.query.limit || 1000;
@@ -125,14 +96,14 @@ router.post("/", auth_role([]), async function (req, res) {
         }
         return res.json(response(result, 0, "success"));
     } catch (e) {
-        logger.error("Get all course error: ", e);
+        logger.error(`Get all course error: ${e}`);
     }
     res.json(response({}, -1, "something wrong"));
 });
 
 // Create new Course
 const register_course_schema = require("../schemas/register_course.json");
-router.post("/new", auth_role([1]), validation(register_course_schema), async function (req, res) {
+router.post("/new", auth_role([1, 2]), validation(register_course_schema), async function (req, res) {
     const reqData = req.body;
     const authData = req.authData;
     try {
@@ -149,7 +120,7 @@ router.post("/new", auth_role([1]), validation(register_course_schema), async fu
         }
         return res.json(response(result, 0, "success"));
     } catch (e) {
-        logger.error("Create new Course error: ", e);
+        logger.error(`Create new Course error: ${e}`);
         return res.json(response({}, -1, "something wrong"));
     }
 })
@@ -174,10 +145,9 @@ router.get("/:id", auth_role([]), async function (req, res) {
                 }
             }
         }
-        const feedback_list = [];
+        const feedback = await feedbackRepo.getAllByCourseId(id);
         const enroll_count = await enrollRepo.countByCourseId(id);
-        const feedback_count = 0;
-
+        
         let data = {
             ...course.dataValues,
             owner_name: course.User.name,
@@ -185,14 +155,12 @@ router.get("/:id", auth_role([]), async function (req, res) {
             isEnroll: isEnroll,
             chapter_count: chapter_list.count,
             chapters: chapter_list.rows,
-            feedback: feedback_list,
-            feedback_count: feedback_count,
+            feedback: feedback.rows,
+            feedback_count: feedback.count,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         };
         let user = {...data.User.dataValues};
-        delete user.password;
-        delete user.ref_token;
         delete data.User;
         data = {...data, teacher: user};
         await trackingRepo.create({
@@ -209,7 +177,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
 
 // Update course
 const update_course_schema = require("../schemas/update_course.json");
-router.put("/:id", auth_role([1]), validation(update_course_schema), async function (req, res) {
+router.put("/:id", auth_role([1, 2]), validation(update_course_schema), async function (req, res) {
     const reqData = req.body;
     const id = req.params.id;
     const authData = req.authData;
@@ -254,7 +222,7 @@ router.delete("/:id", auth_role([1, 2]), async function (req, res) {
             return res.json(response({}, 400, "You do not have "))
         }
     } catch (e) {
-        logger.error("Delete course error: %s", e);
+        logger.error("Delete course error: ", e);
         return res.json(response({}, -1, "something wrong"));
     }
 })

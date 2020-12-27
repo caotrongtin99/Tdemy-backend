@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const WishList = sequelize.define('WishList', {
         user_id: {
             type: DataTypes.UUID,
+            primaryKey: true,
             allowNull: false,
             references: {
               model: 'user',
@@ -12,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         course_id: {
             type: DataTypes.UUID,
+            primaryKey: true,
             allowNull: false,
             references: {
               model: 'course',
@@ -21,14 +23,15 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade'
         },
     },{
-        tableName: 'wishLish',
+        tableName: 'wishList',
         underscored: true
     });
+    WishList.removeAttribute("id");
     WishList.associate = (models) => {
-        WishList.courses = WishList.hasMany(
+        WishList.courses = WishList.belongsTo(
             models.Course,
             {
-                foreignKey: 'id',
+                foreignKey: 'course_id',
                 onDelete: 'cascade',
                 hooks: true
             }
@@ -36,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         WishList.user = WishList.belongsTo(
             models.User,
             {
-                foreignKey: 'id',
+                foreignKey: 'user_id',
                 onDelete: 'cascade',
                 hooks: true
             }

@@ -1,9 +1,10 @@
-const router = require("express").Router({mergeParams: true});
+const router = require("express").Router({ mergeParams: true });
 const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const feedbackRepo = require("../repository/feedback.repo");
-const logger = require("../utils/log");
+const courseRepo = require("../repository/course.repo");
 const auth_role = require("../middleware/auth.mdw").auth_role;
+const logger = require("../utils/log");
 
 // Get All feedback
 router.get("/", auth_role([]), async function (req, res) {
@@ -14,7 +15,8 @@ router.get("/", auth_role([]), async function (req, res) {
     try {
         let feedback = await feedbackRepo.getAllByCourseId(course_id, limit, offset);
         feedback = {
-            ...feedback,
+            array: feedback.rows,
+            count: feedback.count,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         }
@@ -26,7 +28,7 @@ router.get("/", auth_role([]), async function (req, res) {
 
 // Create new feedback
 const register_feedback_schema = require("../schemas/register_feedback.json");
-router.post("/", auth_role([0,1]),validation(register_feedback_schema), async function (req, res) {
+router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), async function (req, res) {
     const reqData = req.body;
     const course_id = req.params.id;
     const authData = req.authData;
@@ -38,7 +40,7 @@ router.post("/", auth_role([0,1]),validation(register_feedback_schema), async fu
             let feedback = {...reqData, owner_id: authData.owner_id, course_id: course_id};
             feedback = await feedbackRepo.create(feedback);
             feedback = {
-                ...feedback,
+                ...feedback.dataValues,
                 accessToken: authData.accessToken,
                 refreshToken: authData.refreshToken
             }
@@ -48,14 +50,14 @@ router.post("/", auth_role([0,1]),validation(register_feedback_schema), async fu
             res.json(response({}, 400, "You do not have permission"));
         }
     } catch (e) {
-        logger.error("Create new feedback error: %s", e);
+        logger.error("Create new feedback error: ", e);
         res.json(response({}, -1, "something wrong"));
     }
 })
 
 // Update feedback
 const update_feedback_schema = require("../schemas/update_feedback.json");
-router.put("/:feedback_id", auth_role([0,1]), validation(update_feedback_schema), async function(req, res){
+router.put("/:feedback_id", auth_role([0, 1, 2]), validation(update_feedback_schema), async function(req, res){
     const course_id = req.params.id;
     const feedback_id = req.params.feedback_id;
     const reqData = req.body;
@@ -82,7 +84,7 @@ router.put("/:feedback_id", auth_role([0,1]), validation(update_feedback_schema)
 })
 
 // Delete feedback
-router.delete("/:feedback_id", auth_role([0,1,2]), async function(req, res){
+router.delete("/:feedback_id", auth_role([0, 1, 2]), async function(req, res){
     const course_id = req.params.id;
     const feedback_id = req.params.feedback_id;
     const authData = req.authData;

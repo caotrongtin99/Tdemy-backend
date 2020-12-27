@@ -2,9 +2,16 @@ const User = require("../models").User;
 const bcrypt = require("bcryptjs");
 
 async function getAll() {
-  return await User.findAll();
+  return await User.findAndCountAll();
 }
-
+async function isEmailExist(email) {
+  const count = await User.count({
+    where: {
+      email: email,
+    },
+  });
+  return count || 0;
+}
 async function getNameById(id){
   return await User.findOne({
     where:{
@@ -28,7 +35,14 @@ async function create(user) {
   user.password = bcrypt.hashSync(user.password, process.env.SALT || 10);
   return User.create(user);
 }
-
+async function update_password(email, password){
+  password = bcrypt.hashSync(password, process.env.SALT || 10);
+  return await User.update({password: password},{
+    where:{
+      email: email
+    }
+  })
+}
 async function update(id, user) {
   return  await User.update(user, {
     where: {
@@ -55,6 +69,8 @@ async function remove(id) {
 }
 
 module.exports = {
+  update_password,
+  isEmailExist,
   getNameById,
   getAll,
   getById,
