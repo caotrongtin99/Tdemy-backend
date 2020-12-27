@@ -10,6 +10,8 @@ const response = require("../constants/response");
 const mailModel = require("../utils/mail.model");
 const login_schema = require("../schemas/register.json");
 const sendMail = require("../utils/mailer");
+
+// Authenticate gen token TODO Mục 5.1
 router.post("/", validation(login_schema), async function (req, res) {
   const reqData = req.body;
   let userFind = await userRepo.getByEmail(reqData.email);
@@ -22,15 +24,14 @@ router.post("/", validation(login_schema), async function (req, res) {
     return res.json(response({}, 400, "Invalid credentials"));
   }
   const accessToken = randToken.generate(80);
-  logger.info("Gen accessToken %s", accessToken);
+  logger.info(`Gen accessToken ${accessToken}`);
   const isSaveSuccess = update_accessToken_redis(accessToken, {
     email: userFind.email,
     user_id: userFind.id,
     role: userFind.role,
   });
   logger.info(
-    "Save accessToken into redis %s",
-    isSaveSuccess ? "success" : "fail"
+    `Save accessToken into redis ${isSaveSuccess ? "success" : "fail"}`
   );
 
   // save access token to db

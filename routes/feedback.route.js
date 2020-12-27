@@ -26,17 +26,15 @@ router.get("/", auth_role([]), async function (req, res) {
     }
 });
 
-// Create new feedback
+// Create new feedback TODO Mục 2.4
 const register_feedback_schema = require("../schemas/register_feedback.json");
-router.post("/", auth_role([0,1]),validation(register_feedback_schema), async function (req, res) {
+router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), async function (req, res) {
     const reqData = req.body;
     const course_id = req.params.id;
     const authData = req.authData;
     try {
         const course = await courseRepo.getById(course_id);
         if (course) {
-            delete reqData.accessToken;
-            delete reqData.refreshToken;
             let feedback = {...reqData, owner_id: authData.owner_id, course_id: course_id};
             feedback = await feedbackRepo.create(feedback);
             feedback = {
@@ -57,7 +55,7 @@ router.post("/", auth_role([0,1]),validation(register_feedback_schema), async fu
 
 // Update feedback
 const update_feedback_schema = require("../schemas/update_feedback.json");
-router.put("/:feedback_id", auth_role([0,1]), validation(update_feedback_schema), async function(req, res){
+router.put("/:feedback_id", auth_role([0, 1, 2]), validation(update_feedback_schema), async function(req, res){
     const course_id = req.params.id;
     const feedback_id = req.params.feedback_id;
     const reqData = req.body;
@@ -84,7 +82,7 @@ router.put("/:feedback_id", auth_role([0,1]), validation(update_feedback_schema)
 })
 
 // Delete feedback
-router.delete("/:feedback_id", auth_role([0,1,2]), async function(req, res){
+router.delete("/:feedback_id", auth_role([0, 1, 2]), async function(req, res){
     const course_id = req.params.id;
     const feedback_id = req.params.feedback_id;
     const authData = req.authData;

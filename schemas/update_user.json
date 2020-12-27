@@ -12,12 +12,6 @@
         },
         "name": {
             "type": "string"
-        },
-        "accessToken": {
-            "type": "string"
-        },
-        "refreshToken": {
-            "type": "string"
         }
     }
 }

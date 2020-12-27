@@ -7,7 +7,7 @@ const logger = require("../utils/log");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 
 // Get All enroll
-router.get("/", auth_role([0, 1]), async function (req, res) {
+router.get("/", auth_role([0, 1, 2]), async function (req, res) {
   const authData = req.authData;
   try {
     let enroll = await enrollRepo.getCourseByUserId(authData.owner_id);
@@ -22,7 +22,7 @@ router.get("/", auth_role([0, 1]), async function (req, res) {
     logger.error("Get all wishlist error: %s", e);
   }
 });
-// Enrollment
+// Enrollment TODO: Mục 2.3
 const register_enroll_schema = require("../schemas/register_enroll.json");
 router.post(
   "/",
@@ -63,7 +63,7 @@ router.post(
   }
 );
 // Delete enroll
-router.delete("/:id", auth_role([0, 1]), async function (req, res) {
+router.delete("/:id", auth_role([0, 1, 2]), async function (req, res) {
   const id = req.params.id;
   const authData = req.authData;
   try {
