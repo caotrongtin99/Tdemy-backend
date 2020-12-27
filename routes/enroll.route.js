@@ -22,7 +22,7 @@ router.get("/", auth_role([0, 1, 2]), async function (req, res) {
     logger.error("Get all wishlist error: %s", e);
   }
 });
-// Enrollment
+// Enrollment TODO: Mục 2.3
 const register_enroll_schema = require("../schemas/register_enroll.json");
 router.post(
   "/",

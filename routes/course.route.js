@@ -27,7 +27,7 @@ router.post("/", auth_role([]), async function (req, res) {
         let data = [];
         let courses;
         switch (type) {
-            case "student":
+            case "student":  //TODO Mục 2.2
                 let course_enroll = [];
                 const enrollList = await enrollRepo.getCourseByUserId(value);
                 for(const enroll of enrollList.rows){
@@ -39,10 +39,10 @@ router.post("/", auth_role([]), async function (req, res) {
                     rows: course_enroll
                 }
                 break;
-            case "teacher":
+            case "teacher": //TODO Mục 3.3
                 courses = await courseRepo.getAllByOwnerId(value, limit, offset);
                 break;
-            case "view":
+            case "view": //TODO Mục 1.2
                 let most_view_course = [];
                 let courses_list = await trackingRepo.getMostView(limit, offset);
                 for(const view of courses_list){
@@ -54,11 +54,11 @@ router.post("/", auth_role([]), async function (req, res) {
                     count: most_view_course.length
                 }
                 break;
-            case "category":
+            case "category": //TODO Mục 1.3
                 let category = value.split(',');
                 courses = await courseRepo.getByCategory(category, limit, offset);
                 break;
-            case "enroll":
+            case "enroll": // Mục 1.2
                 let most_enroll_course = [];
                 courses = await enrollRepo.getMostEnroll(limit, offset);
                 for(const enroll of courses){
@@ -70,8 +70,13 @@ router.post("/", auth_role([]), async function (req, res) {
                     count: most_enroll_course.length
                 }
                 break;
-            case "new":
+            case "new": //TODO Mục 1.2
                 courses = await courseRepo.getLatest(limit, offset);
+                break;
+            // case "rating": //TODO Mục 1.
+            //     courses = await courseRepo.get
+            case "relate": //TODO Muc 1.5
+                courses = await courseRepo.getAll();
                 break;
             default:
                 courses = await courseRepo.getAll(limit, offset);
@@ -101,7 +106,7 @@ router.post("/", auth_role([]), async function (req, res) {
     res.json(response({}, -1, "something wrong"));
 });
 
-// Create new Course
+// Create new Course TODO Mục 3.1
 const register_course_schema = require("../schemas/register_course.json");
 router.post("/new", auth_role([1, 2]), validation(register_course_schema), async function (req, res) {
     const reqData = req.body;
@@ -125,7 +130,7 @@ router.post("/new", auth_role([1, 2]), validation(register_course_schema), async
     }
 })
 
-// Get detail course
+// Get detail course TODO Mục 1.5
 router.get("/:id", auth_role([]), async function (req, res) {
     const id = req.params.id;
     const authData = req.authData;
@@ -175,7 +180,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
     }
 })
 
-// Update course
+// Update course TODO Mục 3.2
 const update_course_schema = require("../schemas/update_course.json");
 router.put("/:id", auth_role([1, 2]), validation(update_course_schema), async function (req, res) {
     const reqData = req.body;
@@ -204,7 +209,7 @@ router.put("/:id", auth_role([1, 2]), validation(update_course_schema), async fu
     }
 })
 
-// Delete course
+// Delete course TODO 4.1
 router.delete("/:id", auth_role([1, 2]), async function (req, res) {
     const id = req.params.id;
     const authData = req.authData;

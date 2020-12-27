@@ -7,7 +7,7 @@ const rand = require("rand-token");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const logger = require("../utils/log");
 
-// Get All Category
+// Get All Category TODO Mục 1.1, 4.1
 router.get("/", auth_role([]), async function (req, res) {
   const authData = req.authData;
   try {
@@ -18,7 +18,7 @@ router.get("/", auth_role([]), async function (req, res) {
     return res.json(response({}, -1, "something wrong"));
   }
 });
-
+// Get All Category tree TODO Mục 1.1, 4.1
 router.post("/tree", auth_role([]), async function (req, res) {
   const authData = req.authData;
   try {
@@ -42,7 +42,7 @@ router.post("/tree", auth_role([]), async function (req, res) {
   }
 });
 
-// Create new category
+// Create new category TODO Mục 4.1
 const category_schema = require("../schemas/register_category.json");
 router.post(
   "/",
@@ -69,7 +69,7 @@ router.post(
   }
 );
 
-// Update category
+// Update category TODO Mục 4.1
 router.put(
   "/:name",
   auth_role([2]),
@@ -94,7 +94,7 @@ router.put(
   }
 );
 
-// Delete category
+// Delete category TODO Mục 4.1
 router.delete("/:name", auth_role([2]), async function (req, res) {
   const name = req.params.name;
   const authData = req.authData;
