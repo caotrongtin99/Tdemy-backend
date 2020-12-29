@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 async function getAll() {
   return await User.findAndCountAll();
 }
+
 async function isEmailExist(email) {
   const count = await User.count({
     where: {
@@ -37,11 +38,12 @@ async function create(user) {
 }
 async function update_password(email, password){
   password = bcrypt.hashSync(password, process.env.SALT || 10);
-  return await User.update({password: password},{
+  const isSuccess = await User.update({password: password},{
     where:{
       email: email
     }
-  })
+  });
+  return isSuccess !== 0;
 }
 async function update(id, user) {
   return  await User.update(user, {

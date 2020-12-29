@@ -39,7 +39,7 @@ router.get("/:chapter_id", auth_role([]), async function(req, res){
         return res.json(response({},-1,"something wrong"));
     }
 })
-// Create new chapter
+// Create new chapter TODO Mục 3.1, 3.2
 const register_chapter_schema = require("../schemas/register_chapter.json");
 router.post("/", auth_role([1, 2]), validation(register_chapter_schema), async function (req, res) {
     const reqData = req.body;
@@ -66,7 +66,7 @@ router.post("/", auth_role([1, 2]), validation(register_chapter_schema), async f
     }
 })
 
-// Update chapter
+// Update chapter TODO Mục 3.2
 const update_chapter_schema = require("../schemas/update_chapter.json");
 router.put("/:chapter_id", auth_role([1, 2]), validation(update_chapter_schema), async function (req, res) {
     const reqData = req.body;

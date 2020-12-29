@@ -11,6 +11,7 @@ const mailModel = require("../utils/mail.model");
 const login_schema = require("../schemas/register.json");
 const sendMail = require("../utils/mailer");
 
+// Authenticate gen token TODO Mục 5.1
 router.post("/", validation(login_schema), async function (req, res) {
   const reqData = req.body;
   let userFind = await userRepo.getByEmail(reqData.email);

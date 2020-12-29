@@ -1,7 +1,37 @@
 const Course = require("../models").Course;
+const {map}  = require("lodash");
 const User = require("../models").User;
-const Chapter = require("../models").Chapter;
+const models = require("../models");
 const { Op } = require("sequelize");
+
+
+async function search(key, limit, offset, query){
+  const results = await models.sequelize.query(
+      `SELECT
+      id, code, owner_id, name, avatar_url, status, description, rate, fee, created_at, updated_at, category, short_description, discount, publish_at
+      From ${models.Course.tableName}
+      WHERE 
+      to_tsvector('english', name) @@ to_tsquery('english','${key}')
+      or 
+      category @> (ARRAY['${key}':: CHARACTER VARYING])
+      ${query}
+      LIMIT ${limit} OFFSET ${offset};
+      `,{
+        model: Course,
+        mapToModel:true,
+      }
+  );
+  const courses = await Course.findAndCountAll({
+    where: {
+      id: map(results, 'id'),
+    },
+    include:{
+      model: User,
+      attributes: ['id', 'name', 'avatar_url', 'role', 'status']
+    }
+  });
+  return courses;
+}
 
 async function getAll(limit, offset) {
   return await Course.findAndCountAll({
@@ -9,7 +39,7 @@ async function getAll(limit, offset) {
     offset: offset,
     include: {
       model: User,
-      attributes: ["name"],
+      attributes: ['id', 'name', 'avatar_url', 'role', 'status']
     },
   });
 }
@@ -25,7 +55,7 @@ async function getLatest(limit, offset) {
     order: [["publish_at", "DESC"]],
     include: {
       model: User,
-      attributes: ["name"],
+      attributes: ['id', 'name', 'avatar_url', 'role', 'status']
     },
   });
 }
@@ -40,7 +70,7 @@ async function getByCategory(category, limit, offset) {
     offset: offset,
     include: {
       model: User,
-      attributes: ["name"],
+      attributes: ['id', 'name', 'avatar_url', 'role', 'status']
     },
   });
 }
@@ -54,7 +84,7 @@ async function getCourseByStudentId(student_id, limit, offset) {
     offset: offset,
     include: {
       model: User,
-      attributes: ["name"],
+      attributes: ['id', 'name', 'avatar_url', 'role', 'status']
     },
   });
 }
@@ -68,7 +98,7 @@ async function getAllByOwnerId(teacher_id, limit, offset) {
     offset: offset,
     include: {
       model: User,
-      attributes: ["name"],
+      attributes: ['id', 'name', 'avatar_url', 'role', 'status']
     },
   });
 }
@@ -81,9 +111,7 @@ async function getById(id) {
     include: [
       {
         model: User,
-        attributes: {
-          exclude: ["password", "ref_token"],
-        },
+        attributes: ['id', 'name', 'avatar_url', 'role', 'status']
       },
     ],
   });
@@ -110,6 +138,7 @@ async function remove(id) {
 }
 
 module.exports = {
+  search,
   getByCategory,
   getLatest,
   getCourseByStudentId,
