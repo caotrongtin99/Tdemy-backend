@@ -7,11 +7,11 @@ const logger = require("../utils/log");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 
 const state_schema = require("../schemas/video_state.json");
-router.post('/', auth_role([]), validation(state_schema), async function(req, res){
+router.post('/:id', auth_role([]), validation(state_schema), async function(req, res){
     const authData = req.authData;
     const reqData = req.body;
     try{
-        const chapter_id = reqData.chapter_id;
+        const chapter_id = req.params.id;
         const position = reqData.position;
         const session = await sessionRepo.create({
             user_id: authData.owner_id,

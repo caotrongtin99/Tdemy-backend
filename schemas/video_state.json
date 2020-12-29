@@ -1,18 +1,11 @@
 {
     "additionalProperties": false,
     "required": [
-        "position",
-        "chapter_id"
+        "position"
     ],
     "properties": {
-      "chapter_id": {
-        "type": "string"
-      },
       "position": {
         "type": "number"
-      },
-      "video_url": {
-        "type": "string"
       }
     }
 }
