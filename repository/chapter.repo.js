@@ -36,7 +36,9 @@ async function getPreviewChapter(course_id){
 	});
 }
 async function create(user) {
+	console.log("========user---------", user)
 	const res = await Chapter.create(user);
+	console.log("=========res=========", res)
 	return res;
 }
 
