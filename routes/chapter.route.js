@@ -10,7 +10,7 @@ const logger = require("../utils/log");
 // Get All chapter
 router.get("/", auth_role([]), async function (req, res) {
     const course_id = req.params.id;
-    const authData = req.authData;
+    // const authData = req.authData;
     try {
         const chapter = await chapterRepo.getAllByCourseId(course_id);
         res.json(response(chapter, 0, "success"));

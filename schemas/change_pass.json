@@ -1,0 +1,15 @@
+{
+    "additionalProperties": false,
+    "required": [
+        "old_password",
+        "new_password"
+    ],
+    "properties": {
+        "old_password": {
+            "type": "string"
+        },
+        "new_password": {
+            "type": "string"
+        }
+    }
+}

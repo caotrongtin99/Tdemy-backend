@@ -14,23 +14,15 @@ const sendMail = require("../utils/mailer");
 router.get("/", auth_role([2]), async function (req, res) {
   try {
     const users = await userRepo.getAll();
-    let list_user = [];
-    for(const user of users.rows){
-      let data = {
-        ...user.dataValues
-      };
-      delete data.password;
-      list_user.push(data);
-    }
-    res.json(response({count: users.count, rows: list_user}, 0, "success"));
+    res.json(response(users, 0, "success"));
   } catch (e) {
-    logger.error("Get Users error: %s", e);
+    logger.error(`Get Users error: ${e}`);
     res.json(response({}, -1, "something wrong"));
   }
 });
 
 // Change password TODO Mục 5.3
-const change_pass = require("../schemas/register.json");
+const change_pass = require("../schemas/change_pass.json");
 router.post("/changepassword", auth_role([0, 1, 2]), validation(change_pass), async function (req, res){
   const reqData = req.body;
   const authData = req.authData;
@@ -134,15 +126,15 @@ router.put(
 );
 
 // Deactive TODO Mục 4.3
-router.delete("/:id", auth_role([0, 1, 2]), async function (req, res) {
+router.delete("/:id", auth_role([2]), async function (req, res) {
   const id = req.params.id;
-  const authData = req.authData;
+  // const authData = req.authData;
   try {
-    const tokens = await tokenRepo.getByEmail(authData.email);
+    const tokens = await tokenRepo.getByUserId(id);
     for (const token of tokens) {
       redisClient.del(token.access_token);
     }
-    const isDelete = await tokenRepo.removeByEmail(authData.email);
+    const isDelete = await tokenRepo.removeByUserId(id);
     if (isDelete) {
       const result = await userRepo.remove(id);
       return res.json(response(result, 0, "success"));
@@ -150,7 +142,7 @@ router.delete("/:id", auth_role([0, 1, 2]), async function (req, res) {
     throw "error";
   } catch (e) {
     logger.error(`Delete user error: ${e}`);
-    res.json(response({}, -1, "something wrong"));
+    return res.json(response({}, -1, "something wrong"));
   }
 });
 module.exports = router;

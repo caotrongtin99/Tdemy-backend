@@ -23,7 +23,7 @@ app.use("/api/wishlist", require("./routes/wishList.route"));
 app.use("/api/enroll", require("./routes/enroll.route"));
 app.use("/api/search", require("./routes/search.route"));
 app.use("/api/category", require("./routes/category.route"));
-// app.use("/api/state", require("./routes/video_state.route"));
+app.use("/api/session", require("./routes/video_state.route"));
 
 app.use(function (req, res, next) {
   res.status(404).send({
