@@ -37,6 +37,7 @@ router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), asyn
         if (course) {
             let feedback = {...reqData, owner_id: authData.owner_id, course_id: course_id};
             feedback = await feedbackRepo.create(feedback);
+            recall_rating(course_id);
             feedback = {
                 ...feedback.dataValues,
                 accessToken: authData.accessToken,
@@ -70,6 +71,7 @@ router.put("/:feedback_id", auth_role([0, 1, 2]), validation(update_feedback_sch
                 accessToken: authData.accessToken,
                 refreshToken: authData.refreshToken
             }
+            recall_rating(course_id);
             res.json(response(feedback, 0, "success"));
         } else {
             logger.info("Update feedback not permission or not exist");
@@ -106,4 +108,14 @@ router.delete("/:feedback_id", auth_role([0, 1, 2]), async function(req, res){
         res.json(response({}, -1,"something wrong"));
     }
 })
+
+async function recall_rating(course_id){
+    const sum = (await feedbackRepo.sumByCourseId(course_id))[0].dataValues.rating;
+    const count = await feedbackRepo.countByCourseId(course_id);
+    const rating = sum / count;
+    console.log(`Sum: ${sum}: Count: ${count}: Rating: ${rating}`);
+    await courseRepo.update(course_id,{
+        rate: rating
+    });
+}
 module.exports = router;

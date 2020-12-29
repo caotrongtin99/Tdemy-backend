@@ -36,21 +36,26 @@ async function create(token) {
   return res;
 }
 
+async function removeByUserId(id){
+  return await Token.destroy({
+    where:{
+      user_id: id
+    }
+  })
+}
 async function removeByEmail(email) {
-  const res = await Token.destroy({
+  return await Token.destroy({
     where: {
       email: email,
     },
   });
-  return res;
 }
 async function removeByAccessToken(accessToken) {
-    const res = await Token.destroy({
+    return await Token.destroy({
       where: {
         accessToken: accessToken,
       },
     });
-    return res;
   }
 
 module.exports = {
@@ -59,6 +64,7 @@ module.exports = {
   getByUserId,
   getByAccessToken,
   removeByEmail,
+  removeByUserId,
   create,
   removeByAccessToken
 };

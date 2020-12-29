@@ -35,7 +35,8 @@ router.post("/", validation(login_schema), async function (req, res) {
   );
 
   // save access token to db
-  const tokenSave = await tokenRepo.create({
+  await tokenRepo.create({
+    user_id: userFind.id,
     access_token: accessToken,
     email: userFind.email,
   });
