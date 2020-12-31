@@ -19,7 +19,14 @@ async function getMostEnroll(limit, offset){
         offset: offset
     })
 }
-
+async function getEnroll(user_id, course_id) {
+  return await Enroll.findOne({
+    where: {
+      course_id: course_id,
+      user_id: user_id,
+    },
+  });
+}
 async function checkEnroll(user_id, course_id){
     const res = await Enroll.findOne({
         where:{
@@ -96,6 +103,7 @@ module.exports = {
     getAllByEnrollId,
     getMostEnroll,
     checkEnroll,
+    getEnroll,
     getUserByCourseId,
     countByCourseId,
     getCourseByUserId,
