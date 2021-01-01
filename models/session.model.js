@@ -27,11 +27,21 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "cascade",
         onDelete: "cascade",
       },
+      course_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "course",
+          key: "id",
+        },
+        onUpdate: "cascade",
+        onDelete: "cascade",
+      },
       cur_pos: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
         allowNull: true,
-      }
+      },
     },
     {
       tableName: "session",
@@ -48,6 +58,12 @@ module.exports = (sequelize, DataTypes) => {
     });
     Session.chapters = Session.belongsTo(models.Chapter, {
       foreignKey: "chapter_id",
+      onUpdate: "cascade",
+      onDelete: "cascade",
+      hooks: true,
+    });
+    Session.courses = Session.belongsTo(models.Course, {
+      foreignKey: "course_id",
       onUpdate: "cascade",
       onDelete: "cascade",
       hooks: true,
