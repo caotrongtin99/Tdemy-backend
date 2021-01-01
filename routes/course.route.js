@@ -6,6 +6,7 @@ const chapterRepo = require("../repository/chapter.repo");
 const enrollRepo = require("../repository/enroll.repo");
 const trackingRepo = require("../repository/tracking.repo");
 const feedbackRepo = require("../repository/feedback.repo");
+const sessionRepo = require("../repository/session.repo");
 const userRepo = require("../repository/user.repo");
 const logger = require("../utils/log");
 const rand = require("rand-token");
@@ -152,7 +153,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
         }
         const feedback = await feedbackRepo.getAllByCourseId(id);
         const enroll_count = await enrollRepo.countByCourseId(id);
-        
+        const session = await sessionRepo.getLatestByUserIdAndCourseId(authData.owner_id, id);
         let data = {
             ...course.dataValues,
             owner_name: course.User.name,
@@ -162,6 +163,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
             chapters: chapter_list.rows,
             feedback: feedback.rows,
             feedback_count: feedback.count,
+            session: session,
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         };

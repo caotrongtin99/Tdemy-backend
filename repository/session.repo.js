@@ -5,16 +5,28 @@ async function getAll() {
   const sessions = await Session.findAll();
   return sessions;
 }
-async function getByUserIdAndChapterId(user_id, chapter_id){
-    return await Session.findOne({
-        where:{
-            user_id: user_id,
-            chapter_id: chapter_id
-        },
-        include:{
-            model: Chapter
-        }
-    })
+async function getByUserIdAndChapterId(user_id, chapter_id) {
+  return await Session.findOne({
+    where: {
+      user_id: user_id,
+      chapter_id: chapter_id
+    },
+    include: {
+      model: Chapter
+    }
+  })
+}
+async function getLatestByUserIdAndCourseId(user_id, course_id) {
+  return await Session.findOne({
+    where: {
+      user_id: user_id,
+      course_id: course_id,
+    },
+    include: {
+      model: Chapter,
+    },
+    order: [["updated_at", "DESC"]],
+  });
 }
 async function getLatestByUserId(user_id) {
   return await Session.findAndCountAll({
@@ -24,6 +36,7 @@ async function getLatestByUserId(user_id) {
     include: {
       model: Chapter,
     },
+    order: [["updated_at", "DESC"]],
   });
 }
 async function getAllByUserId(user_id) {
@@ -62,7 +75,8 @@ async function remove(id) {
 }
 
 module.exports = {
-    getByUserIdAndChapterId,
+  getLatestByUserIdAndCourseId,
+  getByUserIdAndChapterId,
   getLatestByUserId,
   getAllByUserId,
   getAll,
