@@ -9,8 +9,8 @@ const logger = require("../utils/log");
 // Get All feedback
 router.get("/", auth_role([]), async function (req, res) {
     const course_id = req.params.id;
-    const limit = req.query.limit;
-    const offset = req.query.offset;
+    const limit = req.query.limit || Number.parseInt(process.env.DEFAULT_LIMIT) || 10;
+    const offset = req.query.offset || Number.parseInt(process.env.DEFAULT_OFFSET) || 0;
     const authData = req.authData;
     try {
         let feedback = await feedbackRepo.getAllByCourseId(course_id, limit, offset);

@@ -13,7 +13,7 @@ async function isEmailExist(email) {
       email: email,
     },
   });
-  return count || 0;
+  return count !== 0;
 }
 async function getNameById(id){
   return await User.findOne({

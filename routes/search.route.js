@@ -7,7 +7,7 @@ const auth_role = require("../middleware/auth.mdw").auth_role;
 // Full text search TODO Mục 1.4
 router.get("/", auth_role([]), async function (req, res) {
   try {
-    const limit = req.query.limit || 1;
+    const limit = req.query.limit || Number.parseInt(process.env.DEFAULT_LIMIT) || 10;
     const offset = req.query.offset || 0;
     const key = req.query.key;
     const fee = req.query.fee;
