@@ -1,8 +1,8 @@
 runtime: nodejs14
 vpc_access_connector:
-  name: projects/web-nangcao-298114/locations/us-central1/connectors/webvpc
+  name: projects/web-nangcao-300606/locations/us-central1/connectors/vpc
 beta_settings:
-    cloud_sql_instances: web-nangcao-298114:us-central1:postgres1
+    cloud_sql_instances: web-nangcao-300606:us-central1:postgres
 env_variables:
   NODE_ENV: production
   PORT: 8080
@@ -17,8 +17,8 @@ env_variables:
   DB_USERNAME: postgres
   DB_PASSWORD: postgres
   DB_NAME: web
-  DB_HOST: 34.121.215.177
-  SOCKET_PATH: /cloudsql/web-nangcao-298114:us-central1:postgres1
+  DB_HOST: 35.193.79.70
+  SOCKET_PATH: /cloudsql/web-nangcao-300606:us-central1:postgres
 
   REDIS_HOST: 10.43.180.235
   REDIS_PORT: 6379

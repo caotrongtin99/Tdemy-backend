@@ -51,6 +51,7 @@ router.post("/", validation(register_schema), async function (req, res) {
   const user = req.body;
   try {
     const userFind = await userRepo.getByEmail(user.email);
+    console.log(userFind);
     if (userFind.length !== 0) {
       return res.json(response({}, 409, "email exist"));
     }
