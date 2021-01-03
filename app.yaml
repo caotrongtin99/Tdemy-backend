@@ -1,13 +1,24 @@
 runtime: nodejs14
+beta_settings:
+    cloud_sql_instances: web-nangcao-298114:us-central1:postgres1
 env_variables:
+  NODE_ENV: production
   PORT: 8080
+  FE_PORT: 3001
   NUMBER_CHAPTER_PREVIEW: 1
   DEBUG: true
+  DEFAULT_LIMIT: 10
+  DEFAULT_OFFSET: 0
+  CONFIRM_EXP: 600000
+  ACCESS_TOKEN_EXPIRE: 6000000
 
-  CONFIRM_EXP: 60
-  ACCESS_TOKEN_EXPIRE: 60000000
+  DB_USERNAME: postgres
+  DB_PASSWORD: postgres
+  DB_NAME: web
+  DB_HOST: 34.121.215.177
+  SOCKET_PATH: /cloudsql/web-nangcao-298114:us-central1:postgres1
 
-  REDIS_HOST: 127.0.0.1
+  REDIS_HOST: 10.116.16.3
   REDIS_PORT: 6379
 
   SMTP_SERVER: smtp.google.com
