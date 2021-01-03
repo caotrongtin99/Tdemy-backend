@@ -1,4 +1,6 @@
 runtime: nodejs14
+vpc_access_connector:
+  name: projects/web-nangcao-298114/locations/us-central1/connectors/webvpc
 beta_settings:
     cloud_sql_instances: web-nangcao-298114:us-central1:postgres1
 env_variables:
