@@ -20,7 +20,7 @@ env_variables:
   DB_HOST: 35.193.79.70
   SOCKET_PATH: /cloudsql/web-nangcao-300606:us-central1:postgres
 
-  REDIS_HOST: 10.43.180.235
+  REDIS_HOST: 10.238.177.211
   REDIS_PORT: 6379
 
   SMTP_SERVER: smtp.google.com
