@@ -9,8 +9,8 @@ const logger = require("../utils/log");
 // Get All feedback
 router.get("/", auth_role([]), async function (req, res) {
     const course_id = req.params.id;
-    const limit = req.query.limit;
-    const offset = req.query.offset;
+    const limit = req.query.limit || Number.parseInt(process.env.DEFAULT_LIMIT) || 10;
+    const offset = req.query.offset || Number.parseInt(process.env.DEFAULT_OFFSET) || 0;
     const authData = req.authData;
     try {
         let feedback = await feedbackRepo.getAllByCourseId(course_id, limit, offset);
@@ -26,7 +26,7 @@ router.get("/", auth_role([]), async function (req, res) {
     }
 });
 
-// Create new feedback
+// Create new feedback TODO Mục 2.4
 const register_feedback_schema = require("../schemas/register_feedback.json");
 router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), async function (req, res) {
     const reqData = req.body;
@@ -35,10 +35,9 @@ router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), asyn
     try {
         const course = await courseRepo.getById(course_id);
         if (course) {
-            delete reqData.accessToken;
-            delete reqData.refreshToken;
             let feedback = {...reqData, owner_id: authData.owner_id, course_id: course_id};
             feedback = await feedbackRepo.create(feedback);
+            recall_rating(course_id);
             feedback = {
                 ...feedback.dataValues,
                 accessToken: authData.accessToken,
@@ -72,6 +71,7 @@ router.put("/:feedback_id", auth_role([0, 1, 2]), validation(update_feedback_sch
                 accessToken: authData.accessToken,
                 refreshToken: authData.refreshToken
             }
+            recall_rating(course_id);
             res.json(response(feedback, 0, "success"));
         } else {
             logger.info("Update feedback not permission or not exist");
@@ -108,4 +108,14 @@ router.delete("/:feedback_id", auth_role([0, 1, 2]), async function(req, res){
         res.json(response({}, -1,"something wrong"));
     }
 })
+
+async function recall_rating(course_id){
+    const sum = (await feedbackRepo.sumByCourseId(course_id))[0].dataValues.rating;
+    const count = await feedbackRepo.countByCourseId(course_id);
+    const rating = sum / count;
+    console.log(`Sum: ${sum}: Count: ${count}: Rating: ${rating}`);
+    await courseRepo.update(course_id,{
+        rate: rating
+    });
+}
 module.exports = router;

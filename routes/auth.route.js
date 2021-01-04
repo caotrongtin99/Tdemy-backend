@@ -11,6 +11,7 @@ const mailModel = require("../utils/mail.model");
 const login_schema = require("../schemas/register.json");
 const sendMail = require("../utils/mailer");
 
+// Authenticate gen token TODO Mục 5.1
 router.post("/", validation(login_schema), async function (req, res) {
   const reqData = req.body;
   let userFind = await userRepo.getByEmail(reqData.email);
@@ -34,7 +35,8 @@ router.post("/", validation(login_schema), async function (req, res) {
   );
 
   // save access token to db
-  const tokenSave = await tokenRepo.create({
+  await tokenRepo.create({
+    user_id: userFind.id,
     access_token: accessToken,
     email: userFind.email,
   });
@@ -69,8 +71,9 @@ router.all("/confirm", async function (req, res) {
             }
             case "reset_password": {
               const email = data['email'];
-              if(password === null){
-                return res.json(response({},-1,"Password is required"));
+              console.log(password);
+              if (!password || password === null || password === "null") {
+                return res.json(response({}, -1, "Password is required"));
               }
               const tokens = await tokenRepo.getByEmail(email);
               for (const token of tokens) {
@@ -102,7 +105,8 @@ router.post("/forgot", validation(forgot_schema), async function (req, res) {
   const email = req.body.email;
   try {
     if (email) {
-      const isExist = userRepo.isEmailExist(email);
+      const isExist = await userRepo.isEmailExist(email);
+      console.log(isExist);
       if (isExist) {
         const confirm_code = "fg" + randToken.generate(80);
         const cacheCode = redisClient.hmset(confirm_code, {

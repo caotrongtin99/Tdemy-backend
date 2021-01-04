@@ -5,30 +5,46 @@ const randToken = require("rand-token");
 const userRepo = require("../repository/user.repo");
 const tokenRepo = require("../repository/token.repo");
 const logger = require("../utils/log");
+const bcrypt = require("bcryptjs");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const redisClient = require("../utils/redis");
 const sendMail = require("../utils/mailer");
 
-// Get list user
+// Get list user TODO Mục 4.3
 router.get("/", auth_role([2]), async function (req, res) {
   try {
     const users = await userRepo.getAll();
-    let list_user = [];
-    for(const user of users.rows){
-      let data = {
-        ...user.dataValues
-      };
-      delete data.password;
-      list_user.push(data);
-    }
-    res.json(response({count: users.count, rows: list_user}, 0, "success"));
+    res.json(response(users, 0, "success"));
   } catch (e) {
-    logger.error("Get Users error: %s", e);
+    logger.error(`Get Users error: ${e}`);
     res.json(response({}, -1, "something wrong"));
   }
 });
 
-// Register route
+// Change password TODO Mục 5.3
+const change_pass = require("../schemas/change_pass.json");
+router.post("/changepassword", auth_role([0, 1, 2]), validation(change_pass), async function (req, res){
+  const reqData = req.body;
+  const authData = req.authData;
+  const email = authData.email;
+  try{
+        const user = await userRepo.getByEmail(email);
+        if(user){
+          if (!bcrypt.compareSync(reqData.old_password, user.password)) {
+            logger.info("Password not match!");
+            return res.json(response({}, 400, "Invalid credentials"));
+          }
+          const isSuccess = await userRepo.update_password(email, reqData.new_password);
+          return res.json(response(isSuccess, 0, "success"));
+        }
+        logger.info(`Change password fail: user ${email} not exist`);
+        throw 'User Not Exist';
+    }catch (e) {
+      logger.info(`Change password error ${e}`);
+      return res.json(response({}, 500, "something wrong"))
+    }
+})
+// Register route TODO Mục 1.6, 4.3
 const register_schema = require("../schemas/register.json");
 const register_mail = require("../utils/mail.model").register_message;
 router.post("/", validation(register_schema), async function (req, res) {
@@ -68,7 +84,7 @@ router.post("/", validation(register_schema), async function (req, res) {
   }
 });
 
-// Get detail
+// Get detail TODO Mục 4.3
 router.get("/:id", async function (req, res) {
   const id = req.params.id;
   try {
@@ -80,7 +96,7 @@ router.get("/:id", async function (req, res) {
   }
 });
 
-// Update
+// Update TODO Mục 2.2, 3.3, 4.3, 5.2
 const update_schema = require("../schemas/update_user.json");
 router.put(
   "/:id",
@@ -109,16 +125,16 @@ router.put(
   }
 );
 
-// Deactive
-router.delete("/:id", auth_role([0, 1, 2]), async function (req, res) {
+// Deactive TODO Mục 4.3
+router.delete("/:id", auth_role([2]), async function (req, res) {
   const id = req.params.id;
-  const authData = req.authData;
+  // const authData = req.authData;
   try {
-    const tokens = await tokenRepo.getByEmail(authData.email);
+    const tokens = await tokenRepo.getByUserId(id);
     for (const token of tokens) {
       redisClient.del(token.access_token);
     }
-    const isDelete = await tokenRepo.removeByEmail(authData.email);
+    const isDelete = await tokenRepo.removeByUserId(id);
     if (isDelete) {
       const result = await userRepo.remove(id);
       return res.json(response(result, 0, "success"));
@@ -126,7 +142,7 @@ router.delete("/:id", auth_role([0, 1, 2]), async function (req, res) {
     throw "error";
   } catch (e) {
     logger.error(`Delete user error: ${e}`);
-    res.json(response({}, -1, "something wrong"));
+    return res.json(response({}, -1, "something wrong"));
   }
 });
 module.exports = router;

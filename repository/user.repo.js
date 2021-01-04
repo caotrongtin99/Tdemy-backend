@@ -2,15 +2,18 @@ const User = require("../models").User;
 const bcrypt = require("bcryptjs");
 
 async function getAll() {
-  return await User.findAndCountAll();
+  return await User.findAndCountAll({
+    attributes: { exclude: ["password"] },
+  });
 }
+
 async function isEmailExist(email) {
   const count = await User.count({
     where: {
       email: email,
     },
   });
-  return count || 0;
+  return count !== 0;
 }
 async function getNameById(id){
   return await User.findOne({
@@ -37,11 +40,12 @@ async function create(user) {
 }
 async function update_password(email, password){
   password = bcrypt.hashSync(password, process.env.SALT || 10);
-  return await User.update({password: password},{
+  const isSuccess = await User.update({password: password},{
     where:{
       email: email
     }
-  })
+  });
+  return isSuccess !== 0;
 }
 async function update(id, user) {
   return  await User.update(user, {
