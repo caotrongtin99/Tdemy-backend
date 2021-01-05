@@ -7,11 +7,11 @@ let register_message = (to, code) => {
     subject: "Confirm register ✔",
 
     // plaintext body
-    text: `Hello ${to}! Here is your confirmation link: ${process.env.HOST}:${process.env.FE_PORT}/confirm?code=${code}`,
+    text: `Hello ${to}! Here is your confirmation link: ${process.env.HOST}:${process.env.FE_PORT}/active?code=${code}`,
 
     // HTML body
     html: `<p><b>Hello ${to}!</b></p>
-        <p>Here is your confirmation link: <a href="${process.env.HOST}:${process.env.FE_PORT}/confirm?code=${code}">Click Here</a></p>`,
+        <p>Here is your confirmation link: <a href="${process.env.HOST}:${process.env.FE_PORT}/active?code=${code}">Click Here</a></p>`,
   };
 };
 let forget_message = (to, code) =>{
