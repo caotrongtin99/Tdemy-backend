@@ -61,7 +61,7 @@ router.delete("/", auth_role([0, 1]), async function (req, res) {
                 await wishListRepo.remove(authData.owner_id, course_id);
             }
         }
-        return res.json(response(result, 0, "success"));
+        return res.json(response({}, 0, "success"));
     } catch (e) {
         logger.error("Delete wishlist error: ", e);
         res.json(response({}, -1, "something wrong"));
