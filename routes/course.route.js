@@ -88,8 +88,16 @@ router.post("/", auth_role([]), async function (req, res) {
             const enroll_count = await enrollRepo.countByCourseId(course.id);
             const feedback_count = 0;
             let isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id) : false;
-
-            let course_data = { ...course.dataValues, feedback_count: feedback_count, chapter_count: chapter_count, owner_name: course.User.name, enroll_count: enroll_count, isEnroll: isEnroll };
+            let views = await trackingRepo.countByCourseId(course.id);
+            let course_data = { 
+                ...course.dataValues,
+                feedback_count: feedback_count,
+                chapter_count: chapter_count,
+                owner_name: course.User.name,
+                enroll_count: enroll_count,
+                isEnroll: isEnroll,
+                views: views 
+            };
             delete course_data.User;
             data.push(course_data);
         }
