@@ -8,12 +8,13 @@ const auth_role = require("../middleware/auth.mdw").auth_role;
 router.get("/", auth_role([]), async function (req, res) {
   try {
     const limit = req.query.limit || Number.parseInt(process.env.DEFAULT_LIMIT) || 10;
-    const offset = req.query.offset || 0;
+    const offset = Number.parseInt(req.query.offset) || 0;
     const key = req.query.key;
     const fee = req.query.fee;
     const rating = req.query.rating;
     const authData = req.authData;
-    console.log(req.query);
+    console.log("req.query",req.query);
+    console.log("==========liimit offset ========", limit, offset)
     let queryStr = '';
     if (fee !== 'undefined' || rating !== 'undefined') {
       let str = '';

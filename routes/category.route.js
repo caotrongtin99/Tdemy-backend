@@ -21,7 +21,6 @@ router.post("/tree", auth_role([]), async function (req, res) {
   // const authData = req.authData;
   try {
     let category = await categoryRepo.getAllRoot();
-    console.log(category);
     let categories = [];
     for (const cat of category.rows) {
       const leaves = await categoryRepo.getAllLeaf(cat.name);

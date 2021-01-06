@@ -14,8 +14,7 @@ async function search(key, limit, offset, query){
       to_tsvector('english', name) @@ to_tsquery('english','${key}')
       or 
       category @> (ARRAY['${key}':: CHARACTER VARYING])
-      ${query}
-      LIMIT ${limit} OFFSET ${offset};
+      OFFSET ${offset} LIMIT ${limit};
       `,{
         model: Course,
         mapToModel:true,
