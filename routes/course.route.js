@@ -89,14 +89,14 @@ router.post("/", auth_role([]), async function (req, res) {
             const feedback_count = 0;
             let isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id) : false;
             let views = await trackingRepo.countByCourseId(course.id);
-            let course_data = { 
+            let course_data = {
                 ...course.dataValues,
                 feedback_count: feedback_count,
                 chapter_count: chapter_count,
                 owner_name: course.User.name,
                 enroll_count: enroll_count,
                 isEnroll: isEnroll,
-                views: views 
+                views: views
             };
             delete course_data.User;
             data.push(course_data);
@@ -225,16 +225,20 @@ router.delete("/:id", auth_role([1, 2]), async function (req, res) {
     const authData = req.authData;
     try {
         let course = await courseRepo.getById(id);
-        if (course && course.owner_id === authData.owner_id) {
-            let result = await courseRepo.remove(id);
-            result = {
-                ...result,
-                accessToken: authData.accessToken,
-                refreshToken: authData.refreshToken
+        if (course) {
+            if (course.owner_id === authData.owner_id || authData.role === 2) {
+                let result = await courseRepo.remove(id);
+                result = {
+                    ...result,
+                    accessToken: authData.accessToken,
+                    refreshToken: authData.refreshToken
+                }
+                return res.json(response(result, 0, "success"));
+            } else {
+                return res.json(response({}, 400, "You do not have "))
             }
-            return res.json(response(result, 0, "success"));
         } else {
-            return res.json(response({}, 400, "You do not have "))
+            return res.json(response({}, 404, "Course not exist"));
         }
     } catch (e) {
         logger.error("Delete course error: ", e);

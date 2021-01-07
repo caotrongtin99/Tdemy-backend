@@ -35,6 +35,7 @@ router.get("/", auth_role([]), async function (req, res) {
     data = {
       array: data.rows,
       count: data.count,
+      totalCount: data.totalCount,
       accessToken: authData.accessToken,
       refreshToken: authData.refreshToken,
     };
