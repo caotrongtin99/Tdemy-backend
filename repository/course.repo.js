@@ -1,13 +1,13 @@
 const Course = require("../models").Course;
-const {map}  = require("lodash");
+const { map } = require("lodash");
 const User = require("../models").User;
 const models = require("../models");
 const { Op } = require("sequelize");
+const sequelize = require("sequelize");
 
 
-async function search(key, limit, offset, query){
-  const results = await models.sequelize.query(
-      `SELECT
+async function search(key, limit, offset, query, subQuery) {
+  const sql = `SELECT
       id, code, owner_id, name, avatar_url, status, description, rate, fee, created_at, updated_at, category, short_description, discount, publish_at
       From ${models.Course.tableName}
       WHERE 
@@ -16,22 +16,39 @@ async function search(key, limit, offset, query){
       category @> (ARRAY['${key}':: CHARACTER VARYING])
       ${query}
       LIMIT ${limit} OFFSET ${offset};
-      `,{
-        model: Course,
-        mapToModel:true,
-      }
-  );
-  let courses = await Course.findAndCountAll({
-    where: {
-      id: map(results, 'id'),
-    },
-    include:{
-      model: User,
-      attributes: ['id', 'name', 'avatar_url', 'role', 'status']
+      `;
+  const results = await models.sequelize.query(
+    sql
+    , {
+      model: Course,
+      mapToModel: true,
     }
-  });
+  );
+  let courses;
+  if (subQuery) {
+    courses = await Course.findAndCountAll({
+      where: {
+        id: map(results, "id"),
+      },
+      include: {
+        model: User,
+        attributes: ["id", "name", "avatar_url", "role", "status"],
+      },
+      order: [[sequelize.literal(subQuery)]],
+    })
+  } else {
+    courses = await Course.findAndCountAll({
+      where: {
+        id: map(results, "id"),
+      },
+      include: {
+        model: User,
+        attributes: ["id", "name", "avatar_url", "role", "status"],
+      }
+    });
+  }
   const count = await models.sequelize.query(
-      `SELECT
+    `SELECT
       id, code, owner_id, name, avatar_url, status, description, rate, fee, created_at, updated_at, category, short_description, discount, publish_at
       From ${models.Course.tableName}
       WHERE 
@@ -41,11 +58,11 @@ async function search(key, limit, offset, query){
       ${query}
       LIMIT ALL;
       `,
-      {
-        model: Course,
-        mapToModel: true,
-      }
-    );
+    {
+      model: Course,
+      mapToModel: true,
+    }
+  );
   courses.totalCount = count.length;
   return courses;
 }
