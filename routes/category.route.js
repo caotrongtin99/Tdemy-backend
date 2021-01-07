@@ -100,7 +100,7 @@ router.delete("/:name", auth_role([2]), async function (req, res) {
   try {
     if (await categoryRepo.isExist(name)) {
       const courses = await courseRepo.getByCategory(name);
-      if(courses){
+      if(courses.count !== 0){
         return res.json(response({}, 0, "Can not delete category has been used!"));
       }
       const category = await categoryRepo.remove(name);
