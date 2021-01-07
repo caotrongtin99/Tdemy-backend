@@ -20,7 +20,7 @@ async function search(key, limit, offset, query){
         mapToModel:true,
       }
   );
-  const courses = await Course.findAndCountAll({
+  let courses = await Course.findAndCountAll({
     where: {
       id: map(results, 'id'),
     },
@@ -29,6 +29,23 @@ async function search(key, limit, offset, query){
       attributes: ['id', 'name', 'avatar_url', 'role', 'status']
     }
   });
+  const count = await models.sequelize.query(
+      `SELECT
+      id, code, owner_id, name, avatar_url, status, description, rate, fee, created_at, updated_at, category, short_description, discount, publish_at
+      From ${models.Course.tableName}
+      WHERE 
+      to_tsvector('english', name) @@ to_tsquery('english','${key}')
+      or 
+      category @> (ARRAY['${key}':: CHARACTER VARYING])
+      ${query}
+      LIMIT ALL;
+      `,
+      {
+        model: Course,
+        mapToModel: true,
+      }
+    );
+  courses.totalCount = count.length;
   return courses;
 }
 
