@@ -2,6 +2,7 @@ const router = require("express").Router();
 const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const categoryRepo = require("../repository/category.repo");
+const courseRepo = require("../repository/course.repo");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const logger = require("../utils/log");
 
