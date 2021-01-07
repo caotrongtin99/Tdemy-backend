@@ -7,7 +7,8 @@ const sequelize = require("sequelize");
 
 
 async function search(key, limit, offset, query, subQuery) {
-  const sql = `SELECT
+  const results = await models.sequelize.query(
+    `SELECT
       id, code, owner_id, name, avatar_url, status, description, rate, fee, created_at, updated_at, category, short_description, discount, publish_at
       From ${models.Course.tableName}
       WHERE 
@@ -16,9 +17,7 @@ async function search(key, limit, offset, query, subQuery) {
       category @> (ARRAY['${key}':: CHARACTER VARYING])
       ${query}
       LIMIT ${limit} OFFSET ${offset};
-      `;
-  const results = await models.sequelize.query(
-    sql
+      `
     , {
       model: Course,
       mapToModel: true,
