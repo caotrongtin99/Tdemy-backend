@@ -2,6 +2,7 @@ const router = require("express").Router();
 const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const categoryRepo = require("../repository/category.repo");
+const courseRepo = require("../repository/course.repo");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const logger = require("../utils/log");
 
@@ -98,7 +99,8 @@ router.delete("/:name", auth_role([2]), async function (req, res) {
   try {
     if (await categoryRepo.isExist(name)) {
       const courses = await courseRepo.getByCategory(name);
-      if(courses){
+      console.log("========COURSES ============", courses);
+      if(courses.count !== 0){
         return res.json(response({}, 0, "Can not delete category has been used!"));
       }
       const category = await categoryRepo.remove(name);
