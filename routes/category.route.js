@@ -2,6 +2,7 @@ const router = require("express").Router();
 const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const categoryRepo = require("../repository/category.repo");
+const enrollRepo = require("../repository/enroll.repo");
 const courseRepo = require("../repository/course.repo");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const logger = require("../utils/log");
@@ -9,9 +10,14 @@ const logger = require("../utils/log");
 // Get All Category TODO Mục 1.1, 4.1
 router.get("/", auth_role([]), async function (req, res) {
   // const authData = req.authData;
+  const type = req.params.type;
   try {
+    if(type){
+      const courses = await enrollRepo.getMostEnroll(1000, 0);
+    }else{
     const category = await categoryRepo.getAll();
-    res.json(response(category, 0, "success"));
+    return res.json(response(category, 0, "success"));
+    }
   } catch (e) {
     logger.error(`Get all category error: ${e}`);
     return res.json(response({}, -1, "something wrong"));

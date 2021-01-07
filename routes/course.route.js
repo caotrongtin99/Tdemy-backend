@@ -71,6 +71,20 @@ router.post("/", auth_role([]), async function (req, res) {
                     count: most_enroll_course.length
                 }
                 break;
+            case "week":
+                let weekly_course = [];
+                const today = new Date();
+                const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay == 0? -6: 1);
+                courses = await enrollRepo.getMostEnrollWeek(limit, offset, firstDayOfWeek, firstDayOfWeek + 6);
+                for (const enroll of courses) {
+                  const course = await courseRepo.getById(enroll.course_id);
+                  weekly_course.push(course);
+                }
+                courses = {
+                  rows: weekly_course,
+                  count: weekly_course.length,
+                };
+                break;
             case "new": //TODO Mục 1.2
                 courses = await courseRepo.getLatest(limit, offset);
                 break;
