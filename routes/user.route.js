@@ -27,6 +27,7 @@ router.post("/changepassword", auth_role([0, 1, 2]), validation(change_pass), as
   const reqData = req.body;
   const authData = req.authData;
   const email = authData.email;
+  console.log("=========req", reqData);
   try{
         const user = await userRepo.getByEmail(email);
         if(user){
@@ -41,6 +42,7 @@ router.post("/changepassword", auth_role([0, 1, 2]), validation(change_pass), as
         throw 'User Not Exist';
     }catch (e) {
       logger.info(`Change password error ${e}`);
+      console.log("========er=============", e);
       return res.json(response({}, 500, "something wrong"))
     }
 })

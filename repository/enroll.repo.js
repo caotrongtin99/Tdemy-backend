@@ -20,6 +20,7 @@ async function getMostEnroll(limit, offset){
     })
 }
 async function getMostEnrollWeek(limit, offset, from, to){
+    console.log("========limit ==========", {limit, offset, from, to});
         return await Enroll.findAll({
           attributes: [
             "course_id",
