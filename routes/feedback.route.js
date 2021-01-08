@@ -2,6 +2,7 @@ const router = require("express").Router({ mergeParams: true });
 const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const feedbackRepo = require("../repository/feedback.repo");
+const enrollRepo = require("../repository/enroll.repo");
 const courseRepo = require("../repository/course.repo");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const logger = require("../utils/log");
@@ -35,6 +36,10 @@ router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), asyn
     try {
         const course = await courseRepo.getById(course_id);
         if (course) {
+            const isEnroll = await enrollRepo.checkEnroll(authData.owner_id, course_id);
+            if(!isEnroll){
+                return res.json(response({}, 400, "You need to enroll this course to feedback"));
+            }
             let feedback = {...reqData, owner_id: authData.owner_id, course_id: course_id};
             feedback = await feedbackRepo.create(feedback);
             recall_rating(course_id);
