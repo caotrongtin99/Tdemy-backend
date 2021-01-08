@@ -118,7 +118,7 @@ async function recall_rating(course_id){
     const sum = (await feedbackRepo.sumByCourseId(course_id))[0].dataValues.rating;
     const count = await feedbackRepo.countByCourseId(course_id);
     const rating = sum / count;
-    console.log(`Sum: ${sum}: Count: ${count}: Rating: ${rating}`);
+    logger.info(`Sum: ${sum}: Count: ${count}: Rating: ${rating}`);
     await courseRepo.update(course_id,{
         rate: rating
     });

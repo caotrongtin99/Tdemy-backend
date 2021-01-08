@@ -23,26 +23,32 @@ router.get("/", auth_role([2]), async function (req, res) {
 
 // Change password TODO Mục 5.3
 const change_pass = require("../schemas/change_pass.json");
-router.post("/changepassword", auth_role([0, 1, 2]), validation(change_pass), async function (req, res){
+router.post("/changepassword", auth_role([0, 1, 2]), validation(change_pass), async function (req, res) {
   const reqData = req.body;
   const authData = req.authData;
   const email = authData.email;
-  try{
-        const user = await userRepo.getByEmail(email);
-        if(user){
-          if (!bcrypt.compareSync(reqData.old_password, user.password)) {
-            logger.info("Password not match!");
-            return res.json(response({}, 400, "Invalid credentials"));
-          }
-          const isSuccess = await userRepo.update_password(email, reqData.new_password);
-          return res.json(response(isSuccess, 0, "success"));
-        }
-        logger.info(`Change password fail: user ${email} not exist`);
-        throw 'User Not Exist';
-    }catch (e) {
-      logger.info(`Change password error ${e}`);
-      return res.json(response({}, 500, "something wrong"))
+  try {
+    const user = await userRepo.getByEmail(email);
+    if (user[0]) {
+      if (!bcrypt.compareSync(reqData.old_password, user[0].password)) {
+        logger.info("Password not match!");
+        return res.json(response({}, 400, "Invalid credentials"));
+      }
+      const isDelete = await removeToken(authData.owner_id);
+      if (isDelete) {
+        const isSuccess = await userRepo.update_password(
+          email,
+          reqData.new_password
+        );
+        return res.json(response(isSuccess, 0, "success"));
+      }
     }
+    logger.info(`Change password fail: user ${email} not exist`);
+    throw 'User Not Exist';
+  } catch (e) {
+    logger.info(`Change password error ${e}`);
+    return res.json(response({}, 500, "something wrong"))
+  }
 })
 // Register route TODO Mục 1.6, 4.3
 const register_schema = require("../schemas/register.json");
@@ -130,11 +136,7 @@ router.delete("/:id", auth_role([2]), async function (req, res) {
   const id = req.params.id;
   // const authData = req.authData;
   try {
-    const tokens = await tokenRepo.getByUserId(id);
-    for (const token of tokens) {
-      redisClient.del(token.access_token);
-    }
-    const isDelete = await tokenRepo.removeByUserId(id);
+    const isDelete = await removeToken(id);
     if (isDelete) {
       const result = await userRepo.remove(id);
       return res.json(response(result, 0, "success"));
@@ -145,4 +147,17 @@ router.delete("/:id", auth_role([2]), async function (req, res) {
     return res.json(response({}, -1, "something wrong"));
   }
 });
+
+let removeToken = async (user_id) => {
+  try {
+    const tokens = await tokenRepo.getByUserId(user_id);
+    for (const token of tokens) {
+      redisClient.del(token.access_token);
+    }
+    return await tokenRepo.removeByUserId(user_id);
+  } catch (e) {
+    logger.error(`Remove Token error: ${e}`);
+    return false;
+  }
+};
 module.exports = router;

@@ -36,7 +36,6 @@ router.get("/", auth_role([]), async function (req, res) {
       for (const course of courses) {
         category = [...category, ...course.category];
       }
-      console.log(category);
       let counts = {};
       category.forEach(function (x) {
         counts[x] = (counts[x] || 0) + 1;
@@ -45,7 +44,6 @@ router.get("/", auth_role([]), async function (req, res) {
         yield*[...this.entries()].sort((a, b) => a[1] - b[1]);
       };
       let keys = [...counts.keys()];
-      console.log(keys);
       category = [];
       for (const key of keys) {
         category.push(await categoryRepo.getByName(key));
@@ -65,7 +63,6 @@ router.post("/tree", auth_role([]), async function (req, res) {
   // const authData = req.authData;
   try {
     let category = await categoryRepo.getAllRoot();
-    console.log(category);
     let categories = [];
     for (const cat of category.rows) {
       const leaves = await categoryRepo.getAllLeaf(cat.name);
