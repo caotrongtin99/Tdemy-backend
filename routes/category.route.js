@@ -12,11 +12,38 @@ router.get("/", auth_role([]), async function (req, res) {
   // const authData = req.authData;
   const type = req.params.type;
   try {
-    if(type){
-      const courses = await enrollRepo.getMostEnroll(1000, 0);
-    }else{
-    const category = await categoryRepo.getAll();
-    return res.json(response(category, 0, "success"));
+    if (type) {
+      const today = new Date();
+      const firstDayOfWeek =
+        today.getDate() - today.getDay() + (today.getDay == 0 ? -6 : 1);
+      const courses = await enrollRepo.getMostEnrollWeek(
+        limit,
+        offset,
+        firstDayOfWeek,
+        firstDayOfWeek + 6
+      );
+      let category = [];
+      for (const course of courses) {
+        category = [...category, ...course.category];
+      }
+      console.log(category);
+      let counts = {};
+      category.forEach(function (x) {
+        counts[x] = (counts[x] || 0) + 1;
+      });
+      counts[Symbol.iterator] = function* () {
+        yield* [...this.entries()].sort((a, b) => a[1] - b[1]);
+      };
+      let keys = [...counts.keys()];
+      console.log(keys);
+      category = [];
+      for (const key of keys) {
+        category.push(await categoryRepo.getByName(key));
+      }
+      return res.json(response(category, 0, "success"));
+    } else {
+      const category = await categoryRepo.getAll();
+      return res.json(response(category, 0, "success"));
     }
   } catch (e) {
     logger.error(`Get all category error: ${e}`);
@@ -38,7 +65,10 @@ router.post("/tree", auth_role([]), async function (req, res) {
       });
     }
     res.json(
-      response({ rows: categories, count: category.count }, 0, "success")
+      response({
+        rows: categories,
+        count: category.count
+      }, 0, "success")
     );
   } catch (e) {
     logger.error(`Get category tree error ${e}`);
@@ -105,8 +135,10 @@ router.delete("/:name", auth_role([2]), async function (req, res) {
   try {
     if (await categoryRepo.isExist(name)) {
       const courses = await courseRepo.getByCategory(name);
-      if(courses.count !== 0){
-        return res.json(response({}, 0, "Can not delete category has been used!"));
+      if (courses.count !== 0) {
+        return res.json(
+          response({}, 0, "Can not delete category has been used!")
+        );
       }
       const category = await categoryRepo.remove(name);
       logger.info(`Delete category ${name} success`);
