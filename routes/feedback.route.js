@@ -2,6 +2,7 @@ const router = require("express").Router({ mergeParams: true });
 const validation = require("../middleware/validation.mdw");
 const response = require("../constants/response");
 const feedbackRepo = require("../repository/feedback.repo");
+const enrollRepo = require("../repository/enroll.repo");
 const courseRepo = require("../repository/course.repo");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 const logger = require("../utils/log");
@@ -9,8 +10,8 @@ const logger = require("../utils/log");
 // Get All feedback
 router.get("/", auth_role([]), async function (req, res) {
     const course_id = req.params.id;
-    const limit = req.query.limit;
-    const offset = req.query.offset;
+    const limit = req.query.limit || Number.parseInt(process.env.DEFAULT_LIMIT) || 10;
+    const offset = req.query.offset || Number.parseInt(process.env.DEFAULT_OFFSET) || 0;
     const authData = req.authData;
     try {
         let feedback = await feedbackRepo.getAllByCourseId(course_id, limit, offset);
@@ -35,8 +36,13 @@ router.post("/", auth_role([0, 1, 2]),validation(register_feedback_schema), asyn
     try {
         const course = await courseRepo.getById(course_id);
         if (course) {
+            const isEnroll = await enrollRepo.checkEnroll(authData.owner_id, course_id);
+            if(!isEnroll){
+                return res.json(response({}, 400, "You need to enroll this course to feedback"));
+            }
             let feedback = {...reqData, owner_id: authData.owner_id, course_id: course_id};
             feedback = await feedbackRepo.create(feedback);
+            recall_rating(course_id);
             feedback = {
                 ...feedback.dataValues,
                 accessToken: authData.accessToken,
@@ -70,6 +76,7 @@ router.put("/:feedback_id", auth_role([0, 1, 2]), validation(update_feedback_sch
                 accessToken: authData.accessToken,
                 refreshToken: authData.refreshToken
             }
+            recall_rating(course_id);
             res.json(response(feedback, 0, "success"));
         } else {
             logger.info("Update feedback not permission or not exist");
@@ -106,4 +113,14 @@ router.delete("/:feedback_id", auth_role([0, 1, 2]), async function(req, res){
         res.json(response({}, -1,"something wrong"));
     }
 })
+
+async function recall_rating(course_id){
+    const sum = (await feedbackRepo.sumByCourseId(course_id))[0].dataValues.rating;
+    const count = await feedbackRepo.countByCourseId(course_id);
+    const rating = sum / count;
+    logger.info(`Sum: ${sum}: Count: ${count}: Rating: ${rating}`);
+    await courseRepo.update(course_id,{
+        rate: rating
+    });
+}
 module.exports = router;

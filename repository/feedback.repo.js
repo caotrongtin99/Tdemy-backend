@@ -1,11 +1,28 @@
 const FeedBack = require("../models").Feedback;
 const User = require("../models").User;
+const sequelize = require("sequelize");
 
 async function getAll() {
   const users = await FeedBack.findAll();
   return users;
 }
-
+async function sumByCourseId(course_id){
+  const res = await FeedBack.findAll({
+    attributes: [
+      "course_id",
+      [sequelize.fn("sum", sequelize.col("rating")), "rating"],
+    ],
+    group: ["course_id"],
+  });
+  return res;
+}
+async function countByCourseId(course_id){
+  return await FeedBack.count({
+    where:{
+      course_id: course_id
+    }
+  })
+}
 async function getAllByCourseId(course_id, limit, offset) {
   return await FeedBack.findAndCountAll({
     where: {
@@ -54,10 +71,12 @@ async function remove(id) {
 
 module.exports = {
   getAllByCourseId,
+  sumByCourseId,
   getAllByUserId,
   getAll,
   getById,
   create,
   update,
   remove,
+  countByCourseId,
 };

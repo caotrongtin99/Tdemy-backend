@@ -10,7 +10,7 @@ const logger = require("../utils/log");
 // Get All chapter
 router.get("/", auth_role([]), async function (req, res) {
     const course_id = req.params.id;
-    const authData = req.authData;
+    // const authData = req.authData;
     try {
         const chapter = await chapterRepo.getAllByCourseId(course_id);
         res.json(response(chapter, 0, "success"));
@@ -48,6 +48,12 @@ router.post("/", auth_role([1, 2]), validation(register_chapter_schema), async f
     try {
         const course = await courseRepo.getById(course_id);
         if (course && course.owner_id === authData.owner_id) {
+            if (
+              (!reqData.duration && reqData.video_url) ||
+              (reqData.duration && !reqData.video_url)
+            ) {
+              return res.json(response({}, -1 , "a pair \'duration'\ and \'video_url\' need to exist or not exist"))
+            }
             let chapter = {...reqData, code: rand.generate(6), course_id: course_id};
             chapter = await chapterRepo.create(chapter);
             chapter = {

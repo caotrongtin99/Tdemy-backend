@@ -13,6 +13,13 @@ async function getMostView(limit, offset){
         offset: offset
     })
 }
+async function countByCourseId(course_id){
+    return await Tracking.count({
+        where:{
+            course_id: course_id
+        }
+    })
+}
 async function getAllByCourseId(course_id, limit, offset){
     return await Tracking.findAll({
         where:{
@@ -60,6 +67,7 @@ async function remove(id) {
 
 module.exports = {
     getMostView,
+    countByCourseId,
     getAllByCourseId,
     getAllByUserId,
     getAll,

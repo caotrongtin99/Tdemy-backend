@@ -26,7 +26,7 @@ router.get("/", auth_role([0, 1, 2]), async function (req, res) {
 const register_enroll_schema = require("../schemas/register_enroll.json");
 router.post(
   "/",
-  auth_role([0, 1]),
+  auth_role([0, 1, 2]),
   validation(register_enroll_schema),
   async function (req, res) {
     const reqData = req.body;
@@ -36,18 +36,28 @@ router.post(
       let count = 0;
       for (const course_id of reqData.course_id) {
         let enroll = {};
-        if (
-          (await courseRepo.getById(course_id)) != null &&
-          (await enrollRepo.checkEnroll(authData.owner_id, course_id)) != null
-        ) {
-          enroll = await enrollRepo.create({
-            course_id: course_id,
-            user_id: authData.owner_id,
-          });
-          enroll = { ...enroll.dataValues };
-          count += 1;
+        if ((await courseRepo.getById(course_id)) != null) {
+          const enrollment = await enrollRepo.getEnroll(authData.owner_id, course_id);
+          if (enrollment == null) {
+            enroll = await enrollRepo.create({
+              course_id: course_id,
+              user_id: authData.owner_id,
+            });
+            enroll = {
+              ...enroll.dataValues,
+              code: 0,
+              message: "Enroll to course success"
+            };
+            count += 1;
+          } else {
+            enroll = {
+              ...enrollment.dataValues,
+              code: 409,
+              message: "You have enroll to this course"
+            };
+          }
+          enroll_res.push(enroll);
         }
-        enroll_res.push(enroll);
       }
       const result = {
         array: enroll_res,

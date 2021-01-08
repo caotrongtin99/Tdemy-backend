@@ -2,7 +2,8 @@
   "additionalProperties": false,
   "required": [
     "name",
-    "category"
+    "category",
+    "short_description"
   ],
   "properties": {
     "category": {

@@ -2,7 +2,7 @@ const Enroll = require("../models").Enroll;
 const User = require("../models").User;
 const Course = require("../models").Course;
 const sequelize = require("sequelize");
-
+const { Op } = require("sequelize");
 async function getAll(limit, offset) {
     return  await Enroll.findAndCountAll({
         limit: limit,
@@ -19,7 +19,31 @@ async function getMostEnroll(limit, offset){
         offset: offset
     })
 }
-
+async function getMostEnrollWeek(limit, offset, from, to){
+        return await Enroll.findAll({
+          attributes: [
+            "course_id",
+            [sequelize.fn("count", sequelize.col("user_id")), "count"],
+          ],
+          where:{
+              created_at: {
+                  [Op.between]: [from, to]
+              }
+          },
+          group: ["course_id"],
+          order: [["count", "DESC"]],
+          limit: limit,
+          offset: offset,
+        });
+}
+async function getEnroll(user_id, course_id) {
+  return await Enroll.findOne({
+    where: {
+      course_id: course_id,
+      user_id: user_id,
+    },
+  });
+}
 async function checkEnroll(user_id, course_id){
     const res = await Enroll.findOne({
         where:{
@@ -93,9 +117,11 @@ async function remove(id) {
 }
 
 module.exports = {
+    getMostEnrollWeek,
     getAllByEnrollId,
     getMostEnroll,
     checkEnroll,
+    getEnroll,
     getUserByCourseId,
     countByCourseId,
     getCourseByUserId,

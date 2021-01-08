@@ -2,7 +2,9 @@ const User = require("../models").User;
 const bcrypt = require("bcryptjs");
 
 async function getAll() {
-  return await User.findAndCountAll();
+  return await User.findAndCountAll({
+    attributes: { exclude: ["password"] },
+  });
 }
 
 async function isEmailExist(email) {
@@ -11,7 +13,7 @@ async function isEmailExist(email) {
       email: email,
     },
   });
-  return count || 0;
+  return count !== 0;
 }
 async function getNameById(id){
   return await User.findOne({

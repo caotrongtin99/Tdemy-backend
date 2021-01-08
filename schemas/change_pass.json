@@ -1,15 +1,14 @@
 {
     "additionalProperties": false,
     "required": [
-        "email",
-        "password"
+        "old_password",
+        "new_password"
     ],
     "properties": {
-        "email": {
-            "type": "string",
-            "format": "email"
+        "old_password": {
+            "type": "string"
         },
-        "password": {
+        "new_password": {
             "type": "string"
         }
     }
