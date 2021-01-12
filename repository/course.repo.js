@@ -66,6 +66,13 @@ async function search(key, limit, offset, query, subQuery) {
   return courses;
 }
 
+async function countByTeacherId(id){
+  return await Course.count({
+    where: {
+      owner_id: id,
+    },
+  });
+}
 async function getAll(limit, offset) {
   return await Course.findAndCountAll({
     limit: limit,
@@ -171,6 +178,7 @@ async function remove(id) {
 }
 
 module.exports = {
+  countByTeacherId,
   search,
   getByCategory,
   getLatest,
