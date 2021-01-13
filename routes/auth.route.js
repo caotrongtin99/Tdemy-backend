@@ -71,7 +71,6 @@ router.all("/confirm", async function (req, res) {
             }
             case "reset_password": {
               const email = data['email'];
-              console.log(password);
               if (!password || password === null || password === "null") {
                 return res.json(response({}, -1, "Password is required"));
               }
@@ -106,7 +105,6 @@ router.post("/forgot", validation(forgot_schema), async function (req, res) {
   try {
     if (email) {
       const isExist = await userRepo.isEmailExist(email);
-      console.log(isExist);
       if (isExist) {
         const confirm_code = "fg" + randToken.generate(80);
         const cacheCode = redisClient.hmset(confirm_code, {

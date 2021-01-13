@@ -14,7 +14,6 @@ async function sumByCourseId(course_id){
     ],
     group: ["course_id"],
   });
-  console.log(res);
   return res;
 }
 async function countByCourseId(course_id){

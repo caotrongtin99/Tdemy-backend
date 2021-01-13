@@ -1,5 +1,4 @@
 var nodemailer = require("nodemailer");
-const { prototype } = require("nodemailer/lib/dkim");
 
 let transporter = nodemailer.createTransport(
   {

@@ -13,7 +13,7 @@ router.get("/", auth_role([]), async function (req, res) {
     const fee = req.query.fee || null;
     const rating = req.query.rating || null;
     const authData = req.authData;
-    console.log("req.query",req.query);
+    logger.info(req.query);
     let queryStr = '';
     let subQueryStr = '';
     if (fee !== 'undefined' || rating !== 'undefined') {
@@ -31,7 +31,7 @@ router.get("/", auth_role([]), async function (req, res) {
         subQueryStr = `${str}`;
       }
     }
-    console.log(queryStr);
+    logger.info(queryStr);
     // let queryStr = JSON.stringify(queryObj);
     // queryStr = queryStr.replace(/\b(gt|gte|lt|lte|eq|ne)\b/g, match =>`$${match}`);
     let data = await courseRepo.search(key, limit, offset, queryStr, subQueryStr);

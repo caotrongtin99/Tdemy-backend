@@ -74,8 +74,10 @@ router.post("/", auth_role([]), async function (req, res) {
             case "week":
                 let weekly_course = [];
                 const today = new Date();
-                const firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay == 0? -6: 1);
-                courses = await enrollRepo.getMostEnrollWeek(limit, offset, firstDayOfWeek, firstDayOfWeek + 6);
+                let firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay == 0? -6: 1);
+                const lastDayOfWeek = new Date(today.getFullYear(), today.getMonth(), firstDayOfWeek + 7);
+                firstDayOfWeek = new Date(today.getFullYear(), today.getMonth() , firstDayOfWeek)
+                courses = await enrollRepo.getMostEnrollWeek(limit, offset, firstDayOfWeek, lastDayOfWeek);
                 for (const enroll of courses) {
                   const course = await courseRepo.getById(enroll.course_id);
                   weekly_course.push(course);

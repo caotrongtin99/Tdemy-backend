@@ -81,11 +81,11 @@ async function getLatest(limit, offset) {
     limit: limit,
     offset: offset,
     where: {
-      publish_at: {
+      created_at: {
         [Op.ne]: null,
       },
     },
-    order: [["publish_at", "DESC"]],
+    order: [["created_at", "DESC"]],
     include: {
       model: User,
       attributes: ['id', 'name', 'avatar_url', 'role', 'status']
