@@ -13,6 +13,7 @@ async function sumByCourseId(course_id){
       [sequelize.fn("sum", sequelize.col("rating")), "rating"],
     ],
     group: ["course_id"],
+    having: sequelize.literal(`course_id = '${course_id}'`)
   });
   return res;
 }
