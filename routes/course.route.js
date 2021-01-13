@@ -74,17 +74,17 @@ router.post("/", auth_role([]), async function (req, res) {
             case "week":
                 let weekly_course = [];
                 const today = new Date();
-                let firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay == 0? -6: 1);
+                let firstDayOfWeek = today.getDate() - today.getDay() + (today.getDay == 0 ? -6 : 1);
                 const lastDayOfWeek = new Date(today.getFullYear(), today.getMonth(), firstDayOfWeek + 7);
-                firstDayOfWeek = new Date(today.getFullYear(), today.getMonth() , firstDayOfWeek)
+                firstDayOfWeek = new Date(today.getFullYear(), today.getMonth(), firstDayOfWeek)
                 courses = await enrollRepo.getMostEnrollWeek(limit, offset, firstDayOfWeek, lastDayOfWeek);
                 for (const enroll of courses) {
-                  const course = await courseRepo.getById(enroll.course_id);
-                  weekly_course.push(course);
+                    const course = await courseRepo.getById(enroll.course_id);
+                    weekly_course.push(course);
                 }
                 courses = {
-                  rows: weekly_course,
-                  count: weekly_course.length,
+                    rows: weekly_course,
+                    count: weekly_course.length,
                 };
                 break;
             case "new": //TODO Mục 1.2
@@ -93,7 +93,11 @@ router.post("/", auth_role([]), async function (req, res) {
             // case "rating": //TODO Mục 1.
             //     courses = await courseRepo.get
             case "relate": //TODO Muc 1.5
-                courses = await courseRepo.getAll();
+                courses = await courseRepo.getByCategory(
+                    value,
+                    limit,
+                    offset
+                );
                 break;
             default:
                 courses = await courseRepo.getAll(limit, offset);
@@ -102,6 +106,7 @@ router.post("/", auth_role([]), async function (req, res) {
         for (const course of courses.rows) {
             const chapter_count = await chapterRepo.countByCourseId(course.id);
             const enroll_count = await enrollRepo.countByCourseId(course.id);
+            const course_count = await courseRepo.countByTeacherId(course.owner_id);
             const feedback_count = 0;
             let isEnroll = authData.owner_id !== null ? await enrollRepo.checkEnroll(authData.owner_id, course.id) : false;
             let views = await trackingRepo.countByCourseId(course.id);
@@ -109,13 +114,13 @@ router.post("/", auth_role([]), async function (req, res) {
                 ...course.dataValues,
                 feedback_count: feedback_count,
                 chapter_count: chapter_count,
-                owner_name: course.User.name,
                 enroll_count: enroll_count,
                 isEnroll: isEnroll,
                 views: views
             };
+            let user = {...course_data.User.dataValues, course_count: course_count};
             delete course_data.User;
-            data.push(course_data);
+            data.push({...course_data, teacher: user});
         }
         const result = {
             array: data,
@@ -176,6 +181,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
             }
         }
         const feedback = await feedbackRepo.getAllByCourseId(id);
+        const course_count = await courseRepo.countByTeacherId(course.owner_id);
         const enroll_count = await enrollRepo.countByCourseId(id);
         const session = await sessionRepo.getLatestByUserIdAndCourseId(authData.owner_id, id);
         let data = {
@@ -191,7 +197,7 @@ router.get("/:id", auth_role([]), async function (req, res) {
             accessToken: authData.accessToken,
             refreshToken: authData.refreshToken
         };
-        let user = { ...data.User.dataValues };
+        let user = { ...data.User.dataValues, course_count: course_count};
         delete data.User;
         data = { ...data, teacher: user };
         await trackingRepo.create({
