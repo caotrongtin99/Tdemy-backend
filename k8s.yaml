@@ -1,0 +1,185 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tdemy-be-config
+data:
+  ENV: production
+  PORT: "3000"
+  FE_PORT: "3001"
+  HOST: "127.0.0.1"
+  FE_HOST: "0.0.0.0"
+  NUMBER_CHAPTER_PREVIEW: "1"
+  DEBUG: "false"
+  DEFAULT_LIMIT: "10"
+  DEFAULT_OFFSET: "0"
+  CONFIRM_EXP: "600000"
+  ACCESS_TOKEN_EXPIRE: "600000"
+
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+
+  SMTP_SERVER: smtp.google.com
+  SMTP_PORT1: "465"
+  SMTP_PORT: "587"
+  SMTP_USER: ndthong144.email@gmail.com
+  SMTP_PASSWORD: xojcytnelqfhxmci
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-tdemy
+spec:
+  type: NodePort #
+  selector:
+    app: api-tdemy
+  ports:
+    - port: 80 #
+      name: http #
+      targetPort: 3000
+      protocol: TCP #
+
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-web
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /*
+          backend:
+            serviceName: api-tdemy
+            servicePort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-tdemy
+spec:
+  selector:
+    matchLabels:
+      app: api-tdemy
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api-tdemy
+    spec:
+      containers:
+        - name: api-tdemy
+          image: gcr.io/be-fule/be-tdemy
+          envFrom:
+            - configMapRef:
+                name: tdemy-be-config
+          # env:
+          #   - name: SERVICES
+          #     value: api
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql
+  labels:
+    app: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+  replicas: 1
+  serviceName: postgresql
+  template:
+    metadata:
+      labels:
+        app: postgresql
+    spec:
+      containers:
+        - image: postgres
+          name: postgresql
+          ports:
+            - containerPort: 5432
+          # volumeMounts:
+          #   - mountPath: /var/lib/postgresql/data
+          #     name: postgres-data
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: web
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  labels:
+    name: postgres-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 300Mi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  labels:
+    app: postgresql
+spec:
+  type: LoadBalancer #
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: postgresql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  type: LoadBalancer #
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      name: redis
+      targetPort: 6379
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          ports:
+            - containerPort: 6379
+              name: redis

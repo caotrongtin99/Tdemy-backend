@@ -24,7 +24,9 @@ app.use("/api/enroll", require("./routes/enroll.route"));
 app.use("/api/search", require("./routes/search.route"));
 app.use("/api/category", require("./routes/category.route"));
 app.use("/api/session", require("./routes/session.route"));
-
+app.use("/", function(req, res){
+  res.json("Ok");
+})
 app.use(function (req, res, next) {
   res.status(404).send({
     message: "Resource not found!",
@@ -36,6 +38,7 @@ app.use(function (err, req, res, next) {
     res.status(500).send('Something broke!')
   })
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+const host = process.env.HOST || '127.0.0.1';
+app.listen(port, host, () => {
+  console.log(`Server is running at http://${host}:${port}`);
 });

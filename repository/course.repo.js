@@ -88,7 +88,7 @@ async function getLatest(limit, offset) {
     limit: limit,
     offset: offset,
     where: {
-      publish_at: {
+      created_at: {
         [Op.ne]: null,
       },
     },

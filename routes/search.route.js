@@ -37,7 +37,6 @@ router.get("/", auth_role([]), async function (req, res) {
     // let queryStr = JSON.stringify(queryObj);
     // queryStr = queryStr.replace(/\b(gt|gte|lt|lte|eq|ne)\b/g, match =>`$${match}`);
     let data = await courseRepo.search(key, limit, offset, queryStr, subQueryStr);
-    // console.log(data);
     let dataRes = [];
     for (const course of data.rows) {
       const courseValue = course.dataValues;

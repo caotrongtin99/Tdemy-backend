@@ -1,5 +1,5 @@
 {
-    "additionalProperties": false,
+    "additionalProperties": true,
     "required": [
         "old_password",
         "new_password"
