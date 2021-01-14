@@ -8,17 +8,17 @@
     "logging": false
   },
   "test": {
-    "username": "admin",
-    "password": "admin",
+    "username": "postgres",
+    "password": "postgres",
     "database": "web",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "username": "admin",
-    "password": "admin",
+    "username": "postgres",
+    "password": "postgres",
     "database": "web",
-    "host": "127.0.0.1",
+    "host": "postgresql",
     "dialect": "postgres"
   }
 }
