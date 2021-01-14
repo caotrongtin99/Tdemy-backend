@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const response = require("../constants/response");
 const courseRepo = require("../repository/course.repo");
+const enrollRepo = require("../repository/enroll.repo");
+const trackingRepo = require("../repository/tracking.repo");
 const logger = require("../utils/log");
 const auth_role = require("../middleware/auth.mdw").auth_role;
 
@@ -35,8 +37,28 @@ router.get("/", auth_role([]), async function (req, res) {
     // let queryStr = JSON.stringify(queryObj);
     // queryStr = queryStr.replace(/\b(gt|gte|lt|lte|eq|ne)\b/g, match =>`$${match}`);
     let data = await courseRepo.search(key, limit, offset, queryStr, subQueryStr);
+    // console.log(data);
+    let dataRes = [];
+    for (const course of data.rows) {
+      const courseValue = course.dataValues;
+      const enroll_count = await enrollRepo.countByCourseId(courseValue.id);
+      const feedback_count = 0;
+      let isEnroll =
+        authData.owner_id !== null
+          ? await enrollRepo.checkEnroll(authData.owner_id, courseValue.id)
+          : false;
+      let views = await trackingRepo.countByCourseId(courseValue.id);
+      let course_data = {
+        ...courseValue,
+        feedback_count: feedback_count,
+        enroll_count: enroll_count,
+        isEnroll: isEnroll,
+        views: views,
+      };
+      dataRes.push({ ...course_data });
+    }
     data = {
-      array: data.rows,
+      array: dataRes,
       count: data.count,
       totalCount: data.totalCount,
       accessToken: authData.accessToken,
