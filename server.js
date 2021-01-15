@@ -2,14 +2,14 @@ const express = require("express");
 require("dotenv").config();
 const app = express();
 const logger = require("./utils/log");
-
 //Log request
 const morgan = require('morgan');
-app.use(morgan('dev'));
+app.use(morgan("dev", {
+  skip: (req, res) => (req.url === '/') || (req.url === '/api')
+}));
 
 const cors = require("cors");
 app.use(cors());
-
 //Use body parser
 let bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,9 +24,9 @@ app.use("/api/enroll", require("./routes/enroll.route"));
 app.use("/api/search", require("./routes/search.route"));
 app.use("/api/category", require("./routes/category.route"));
 app.use("/api/session", require("./routes/session.route"));
-app.use("/", function(req, res){
+app.use("/", function (req, res) {
   res.json("Ok");
-})
+});
 app.use(function (req, res, next) {
   res.status(404).send({
     message: "Resource not found!",
