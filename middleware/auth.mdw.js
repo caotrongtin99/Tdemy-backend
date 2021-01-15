@@ -11,7 +11,7 @@ let auth_role = roles => (req, res, next) => {
     redisClient.hgetall(accessToken, async function (err, data) {
       // accessToken not exists
       if ((err || data === null) && roles.length !== 0) {
-        logger.info("AccessToken %s not exist in redis!", accessToken);
+        logger.info(`AccessToken ${accessToken} not exist in redis!`);
         return res.status(400).json(response({}, 400, "Access token not valid"));
       }
       if ((err || data === null) && roles.length === 0) {

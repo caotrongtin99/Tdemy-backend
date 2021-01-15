@@ -236,7 +236,7 @@ router.put("/:id", auth_role([1, 2]), validation(update_course_schema), async fu
             return res.json(response({}, 400, "You do not have permission"));
         }
     } catch (e) {
-        logger.error("Update course error: %s", e);
+        logger.error(`Update course error: ${e}`, e);
         return res.json(response({}, -1, "something wrong"));
     }
 })

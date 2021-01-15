@@ -23,7 +23,7 @@ router.get("/", auth_role([]), async function (req, res) {
         }
         res.json(response(feedback, 0, "success"));
     } catch (e) {
-        logger.error("Get all feedback error: %s", e);
+        logger.error(`Get all feedback error: ${e}`);
     }
 });
 
@@ -83,7 +83,7 @@ router.put("/:feedback_id", auth_role([0, 1, 2]), validation(update_feedback_sch
             return res.json(response({}, 400, "You not have permission"));
         }
     }catch (e) {
-        logger.error("Update feedback error: %s", e);
+        logger.error(`Update feedback error: ${e}`);
         res.json(response({},-1,"something wrong"));
     }
 })
@@ -109,7 +109,7 @@ router.delete("/:feedback_id", auth_role([0, 1, 2]), async function(req, res){
             return res.json(response({}, 400, "You not have permission"));
         }
     }catch (e) {
-        logger.error("Delete feedback error: %s",e);
+        logger.error(`Delete feedback error: ${e}`);
         res.json(response({}, -1,"something wrong"));
     }
 })

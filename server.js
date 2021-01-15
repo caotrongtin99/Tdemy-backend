@@ -5,7 +5,7 @@ const logger = require("./utils/log");
 //Log request
 const morgan = require('morgan');
 app.use(morgan("dev", {
-  skip: (req, res) => (req.url === '/') || (req.url === '/api')
+  skip: (req, res) => (req.baseUrl === '/') || (req.baseUrl === '/api')
 }));
 
 const cors = require("cors");

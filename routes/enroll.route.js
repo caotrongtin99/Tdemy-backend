@@ -19,7 +19,7 @@ router.get("/", auth_role([0, 1, 2]), async function (req, res) {
     };
     res.json(response(enroll, 0, "success"));
   } catch (e) {
-    logger.error("Get all wishlist error: %s", e);
+    logger.error(`Get all wishlist error: ${e}`);
   }
 });
 // Enrollment TODO: Mục 2.3
@@ -88,7 +88,7 @@ router.delete("/:id", auth_role([0, 1, 2]), async function (req, res) {
       return res.json(response({}, 400, "You do not have permission"));
     }
   } catch (e) {
-    logger.error("Delete wishlist error: %s", e);
+    logger.error(`Delete wishlist error: ${e}`);
     res.json(response({}, -1, "something wrong"));
   }
 });

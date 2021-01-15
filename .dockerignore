@@ -23,4 +23,5 @@
 **/.docker
 **/.vscode
 **/.idea
+k8s.yaml
 README.md

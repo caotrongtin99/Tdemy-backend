@@ -5,8 +5,8 @@ metadata:
 data:
   ENV: production
   PORT: "3000"
-  HOST: "127.0.0.1"
-  FE_HOST: "https://tdemy-frontend.herokuapp.com/"
+  HOST: "0.0.0.0"
+  FE_HOST: "https://tdemy-frontend.herokuapp.com"
   NUMBER_CHAPTER_PREVIEW: "1"
   DEBUG: "false"
   DEFAULT_LIMIT: "10"
@@ -34,6 +34,7 @@ spec:
     app: api-tdemy
   ports:
     - port: 80 #
+      name: http
       targetPort: 3000
       protocol: TCP #
 
