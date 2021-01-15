@@ -70,7 +70,7 @@ spec:
       containers:
         - name: api-tdemy
           imagePullPolicy: "Always"
-          image: gcr.io/be-fule/be-tdemy
+          image: gcr.io/be-fule/be-tdemy:latest
           envFrom:
             - configMapRef:
                 name: tdemy-be-config
